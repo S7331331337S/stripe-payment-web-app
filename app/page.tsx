@@ -73,7 +73,15 @@ export default function StorefrontPage() {
         <section id="standards" className="mt-16 scroll-mt-24 rounded-[1.5rem] bg-slate-950 p-7 text-white sm:p-10"><p className="text-xs uppercase tracking-[0.2em] text-indigo-200">A note on responsible research</p><h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight sm:text-4xl">Precision starts with knowing exactly what you are ordering.</h2><p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">Products in this catalog are intended for research use only. Please review each detail sheet and all applicable handling and compliance requirements before ordering.</p></section>
       </main>
 
-      <CartDrawer items={cartItems} onRemoveItem={removeItem} onUpdateQuantity={updateQuantity} onCheckout={() => cartItems.length > 0 && setIsCheckoutOpen(true)} />
+      <CartDrawer
+        items={cartItems}
+        onRemoveItem={removeItem}
+        onUpdateQuantity={updateQuantity}
+        onCheckout={() => cartItems.length > 0 && setIsCheckoutOpen(true)}
+        onReturnToCatalog={() => {
+          document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
+        }}
+      />
       <CheckoutModal items={cartItems.map(({ id, quantity }) => ({ productId: id, quantity }))} isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </div>
   )
