@@ -1,134 +1,67 @@
 'use client'
 
 import { useState } from 'react'
-import { Package } from 'lucide-react'
+import { ArrowDownRight, FlaskConical, LockKeyhole, Menu, Package, ShoppingBag, Sparkles } from 'lucide-react'
 import { ProductCard } from '@/components/product-card'
 import { CartDrawer } from '@/components/cart-drawer'
 import { CheckoutModal } from '@/components/checkout-modal'
 import { PRODUCTS } from '@/lib/products'
 import type { Product } from '@/lib/products'
 
-interface CartItem extends Product {
-  quantity: number
-}
+interface CartItem extends Product { quantity: number }
 
 export default function StorefrontPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
-  const handleAddToCart = (product: Product) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id)
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
-        )
-      }
-      return [...prev, { ...product, quantity: 1 }]
-    })
-  }
-
-  const handleRemoveItem = (productId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== productId))
-  }
-
+  const handleAddToCart = (product: Product) => setCartItems((prev) => {
+    const existing = prev.find((item) => item.id === product.id)
+    return existing ? prev.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item) : [...prev, { ...product, quantity: 1 }]
+  })
+  const handleRemoveItem = (productId: string) => setCartItems((prev) => prev.filter((item) => item.id !== productId))
   const handleUpdateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      handleRemoveItem(productId)
-      return
-    }
-    setCartItems((prev) =>
-      prev.map((item) => (item.id === productId ? { ...item, quantity } : item)),
-    )
-  }
-
-  const handleCheckout = () => {
-    if (cartItems.length > 0) setIsCheckoutOpen(true)
-  }
-
-  const handleCloseCheckout = () => {
-    setIsCheckoutOpen(false)
+    if (quantity <= 0) return handleRemoveItem(productId)
+    setCartItems((prev) => prev.map((item) => item.id === productId ? { ...item, quantity } : item))
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-primary p-2">
-                <Package className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">G&apos;s Stock</h1>
-                <p className="text-xs text-muted-foreground">Premium Peptides & Health</p>
-              </div>
-            </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-background/85 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white"><FlaskConical className="h-4 w-4" /></div>
+            <div><p className="text-sm font-semibold tracking-tight">G&apos;s Stock</p><p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Clinical supply</p></div>
           </div>
+          <div className="flex items-center gap-2"><span className="hidden text-xs text-muted-foreground sm:block">Private catalog</span><button aria-label="Open menu" className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/60"><Menu className="h-4 w-4" /></button></div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 pb-24">
-        {/* Hero Section */}
-        <section className="mb-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 p-6 sm:p-8">
-          <h2 className="mb-2 text-3xl font-bold text-foreground sm:text-4xl">
-            Quality Peptides & Health Products
-          </h2>
-          <p className="mb-4 text-muted-foreground">
-            Curated selection of premium peptides and wellness compounds for research purposes. All products sourced and tested for quality.
-          </p>
-          <div className="text-sm text-muted-foreground">
-            <p>📦 Fast Shipping • 🔬 Research Grade • ✓ Verified Quality</p>
+      <main className="mx-auto max-w-7xl px-5 pb-24 sm:px-8">
+        <section className="relative overflow-hidden py-16 sm:py-24">
+          <div className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-indigo-200/50 blur-3xl" />
+          <div className="pointer-events-none absolute -left-24 bottom-0 h-56 w-56 rounded-full bg-sky-100/70 blur-3xl" />
+          <div className="relative max-w-3xl">
+            <div className="mb-7 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-700"><Sparkles className="h-3.5 w-3.5" /> Curated research supply</div>
+            <h1 className="font-serif text-[clamp(3.2rem,14vw,7rem)] leading-[0.88] tracking-[-0.06em] text-slate-950">A clearer standard for modern research.</h1>
+            <p className="mt-8 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">A considered collection of research compounds, presented with clarity and handled with care.</p>
+            <a href="#catalog" className="mt-9 inline-flex min-h-11 items-center gap-2 rounded-full bg-slate-950 px-5 text-sm font-medium text-white transition-transform hover:translate-y-[-2px]">Explore catalog <ArrowDownRight className="h-4 w-4" /></a>
           </div>
         </section>
 
-        {/* Products Grid */}
-        <section>
-          <h2 className="mb-6 text-2xl font-bold text-foreground">Our Catalog</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {PRODUCTS.map((product) => (
-              <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
-            ))}
-          </div>
+        <section className="mb-16 grid gap-3 border-y border-slate-200/80 py-5 sm:grid-cols-3">
+          {[{ icon: FlaskConical, title: 'Research focused', text: 'Clear catalog notes' }, { icon: LockKeyhole, title: 'Secure checkout', text: 'Protected by Stripe' }, { icon: Package, title: 'Discreet dispatch', text: 'Packed with intention' }].map(({ icon: Icon, title, text }) => <div key={title} className="flex items-center gap-3"><Icon className="h-4 w-4 text-indigo-700" /><div><p className="text-sm font-semibold text-slate-900">{title}</p><p className="text-xs text-slate-500">{text}</p></div></div>)}
         </section>
 
-        {/* Info Section */}
-        <section className="mt-12 grid gap-6 rounded-lg border border-border bg-card p-6 sm:grid-cols-3">
-          <div>
-            <h3 className="mb-2 font-semibold text-foreground">Research Grade</h3>
-            <p className="text-sm text-muted-foreground">
-              All products are for research purposes only and meet strict quality standards.
-            </p>
-          </div>
-          <div>
-            <h3 className="mb-2 font-semibold text-foreground">Secure Checkout</h3>
-            <p className="text-sm text-muted-foreground">
-              Powered by Stripe for safe and secure payment processing.
-            </p>
-          </div>
-          <div>
-            <h3 className="mb-2 font-semibold text-foreground">Expert Support</h3>
-            <p className="text-sm text-muted-foreground">
-              Questions about products? Check links for more detailed information.
-            </p>
-          </div>
+        <section id="catalog" className="scroll-mt-24">
+          <div className="mb-7 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.22em] text-indigo-700">The collection</p><h2 className="mt-2 font-serif text-4xl tracking-[-0.04em] text-slate-950">Browse the catalog</h2></div><div className="hidden items-center gap-2 text-xs text-slate-500 sm:flex"><ShoppingBag className="h-4 w-4" /> {PRODUCTS.length} compounds</div></div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{PRODUCTS.map((product) => <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />)}</div>
         </section>
+
+        <section className="mt-16 rounded-[1.5rem] bg-slate-950 p-7 text-white sm:p-10"><p className="text-xs uppercase tracking-[0.2em] text-indigo-200">A note on responsible research</p><h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight sm:text-4xl">Precision starts with knowing exactly what you are ordering.</h2><p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">Products in this catalog are intended for research use only. Please review each detail sheet and all applicable handling and compliance requirements before ordering.</p></section>
       </main>
 
-      {/* Cart and Checkout */}
-      <CartDrawer
-        items={cartItems}
-        onRemoveItem={handleRemoveItem}
-        onUpdateQuantity={handleUpdateQuantity}
-        onCheckout={handleCheckout}
-      />
-      <CheckoutModal
-        items={cartItems.map(({ id, quantity }) => ({ productId: id, quantity }))}
-        isOpen={isCheckoutOpen}
-        onClose={handleCloseCheckout}
-      />
+      <CartDrawer items={cartItems} onRemoveItem={handleRemoveItem} onUpdateQuantity={handleUpdateQuantity} onCheckout={() => cartItems.length > 0 && setIsCheckoutOpen(true)} />
+      <CheckoutModal items={cartItems.map(({ id, quantity }) => ({ productId: id, quantity }))} isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </div>
   )
 }

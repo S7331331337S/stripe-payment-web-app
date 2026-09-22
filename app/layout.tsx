@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: "G's Stock - Premium Peptides & Health Products",
-  description: 'Quality peptides and wellness compounds for research purposes. Fast shipping, research grade, verified quality.',
+  title: "G's Stock | Clinical Research Supply",
+  description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="light">
       <body className="antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
