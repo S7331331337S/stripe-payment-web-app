@@ -22,7 +22,7 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
       <h1 className="mt-2 text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950">{product.name}</h1>
       <p className="mt-3 text-sm leading-6 text-slate-600">{product.description}</p>
 
-      <div className="mt-5 rounded-3xl border border-border/80 bg-gradient-to-br from-brand-soft via-card to-muted p-5">
+      <div className="mt-5 rounded-3xl border border-border/80 bg-gradient-to-br from-indigo-100 via-white to-sky-100 p-5">
         <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Current availability</p>
         <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">${price}</p>
         <p className="mt-1 text-sm text-emerald-700">

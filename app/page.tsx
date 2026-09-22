@@ -25,8 +25,8 @@ export default function StorefrontPage() {
   return (
     <>
       <section className="relative mb-[var(--app-footer)] flex min-h-[calc(100dvh-var(--app-chrome))] flex-col justify-between overflow-hidden py-3">
-        <div className="pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-brand-muted/35 blur-3xl" />
-        <div className="pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-brand-soft blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-indigo-200/50 blur-3xl" />
+        <div className="pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl" />
 
         <p className="relative inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">
           <Sparkles className="h-3.5 w-3.5" />
