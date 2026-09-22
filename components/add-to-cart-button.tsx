@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import { ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useAppUI } from '@/components/app-ui'
 import { useCart } from '@/components/cart-provider'
 import type { Product } from '@/lib/products'
 
 export function AddToCartButton({ product }: { product: Product }) {
   const { addToCart } = useCart()
+  const { openCart } = useAppUI()
   const [added, setAdded] = useState(false)
   return (
     <Button
@@ -15,9 +17,10 @@ export function AddToCartButton({ product }: { product: Product }) {
       onClick={() => {
         addToCart(product)
         setAdded(true)
+        openCart()
         setTimeout(() => setAdded(false), 1800)
       }}
-      className="min-h-12 w-full rounded-xl bg-slate-950 text-white transition-transform hover:bg-slate-800 active:scale-[0.98]"
+      className="h-12 w-full rounded-2xl bg-slate-950 text-white transition-transform hover:bg-slate-800 active:scale-[0.98]"
     >
       <ShoppingCart className={`h-4 w-4 transition-transform duration-300 ${added ? 'scale-110' : ''}`} />
       <span key={added ? 'added' : 'idle'} className="motion-item-in">

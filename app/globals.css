@@ -36,6 +36,10 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-muted: var(--brand-muted);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -65,6 +69,10 @@
   --border: oklch(0.94 0.001 0);
   --input: oklch(0.95 0.001 0);
   --ring: oklch(0.4 0.08 264);
+  --brand: oklch(0.4 0.08 264);
+  --brand-foreground: oklch(0.99 0 0);
+  --brand-soft: oklch(0.95 0.03 264);
+  --brand-muted: oklch(0.84 0.06 264);
   --chart-1: oklch(0.4 0.08 264);
   --chart-2: oklch(0.5 0.05 264);
   --chart-3: oklch(0.65 0.12 264);
@@ -79,6 +87,9 @@
   --sidebar-accent-foreground: oklch(0.4 0.08 264);
   --sidebar-border: oklch(0.94 0.001 0);
   --sidebar-ring: oklch(0.4 0.08 264);
+  --app-header: calc(3.5rem + env(safe-area-inset-top, 0px));
+  --app-footer: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+  --app-chrome: calc(var(--app-header) + var(--app-footer));
 }
 
 .dark {
@@ -101,6 +112,10 @@
   --border: oklch(0.25 0.01 0);
   --input: oklch(0.2 0.01 0);
   --ring: oklch(0.68 0.12 264);
+  --brand: oklch(0.68 0.12 264);
+  --brand-foreground: oklch(0.12 0.01 0);
+  --brand-soft: oklch(0.25 0.03 264);
+  --brand-muted: oklch(0.55 0.08 264);
   --chart-1: oklch(0.68 0.12 264);
   --chart-2: oklch(0.58 0.08 264);
   --chart-3: oklch(0.75 0.15 264);
@@ -137,6 +152,10 @@
     --border: oklch(0.25 0.01 0);
     --input: oklch(0.2 0.01 0);
     --ring: oklch(0.68 0.12 264);
+    --brand: oklch(0.68 0.12 264);
+    --brand-foreground: oklch(0.12 0.01 0);
+    --brand-soft: oklch(0.25 0.03 264);
+    --brand-muted: oklch(0.55 0.08 264);
     --chart-1: oklch(0.68 0.12 264);
     --chart-2: oklch(0.58 0.08 264);
     --chart-3: oklch(0.75 0.15 264);
@@ -158,13 +177,21 @@
     @apply border-border outline-ring/50;
   }
   html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
   html,
   body {
     @apply bg-background text-foreground;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 }
 

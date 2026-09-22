@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowLeft, ShoppingCart, Trash2, X } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import type { Product } from '@/lib/products'
 
 interface CartItem extends Product {
@@ -10,156 +10,136 @@ interface CartItem extends Product {
 }
 
 interface CartDrawerProps {
+  open: boolean
   items: CartItem[]
+  onClose: () => void
   onRemoveItem: (productId: string) => void
   onUpdateQuantity: (productId: string, quantity: number) => void
   onCheckout: () => void
   onReturnToCatalog?: () => void
 }
 
-export function CartDrawer({ items, onRemoveItem, onUpdateQuantity, onCheckout, onReturnToCatalog }: CartDrawerProps) {
-  const [isOpen, setIsOpen] = useState(false)
+export function CartDrawer({
+  open,
+  items,
+  onClose,
+  onRemoveItem,
+  onUpdateQuantity,
+  onCheckout,
+  onReturnToCatalog,
+}: CartDrawerProps) {
+  const total = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
+  const totalInDollars = (total / 100).toFixed(2)
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
-  const returnToCatalog = () => {
-    setIsOpen(false)
+  function returnToCatalog() {
+    onClose()
     if (onReturnToCatalog) {
       onReturnToCatalog()
       return
     }
-
     if (typeof window !== 'undefined') {
       window.location.assign('/#catalog')
     }
   }
 
-  const total = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
-  const totalInDollars = (total / 100).toFixed(2)
-
-  const toggleDrawer = () => setIsOpen(!isOpen)
-
   return (
-    <>
-      <button
-        onClick={toggleDrawer}
-        className="fixed bottom-6 left-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110"
-        aria-label="Open cart"
-      >
-        <ShoppingCart className="h-6 w-6" />
-        {items.length > 0 && (
-          <span
-            key={items.length}
-            className="motion-badge-pop absolute top-0 right-0 inline-flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground"
-          >
-            {items.length}
-          </span>
-        )}
-      </button>
+    <aside
+      aria-hidden={!open}
+      inert={!open}
+      className={cn(
+        'fixed inset-x-0 z-[46] mx-auto flex w-full max-w-lg flex-col rounded-t-3xl border border-slate-200/80 bg-background shadow-[0_-18px_50px_-20px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out',
+        'bottom-[calc(4.25rem+env(safe-area-inset-bottom))] max-h-[min(38rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom)))]',
+        open ? 'translate-y-0' : 'pointer-events-none translate-y-[120%]',
+      )}
+    >
+      <div className="flex items-center justify-between px-5 pb-3 pt-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand">Bag</p>
+          <h2 className="text-lg font-semibold tracking-tight">
+            {itemCount === 0 ? 'Your cart' : `${itemCount} item${itemCount === 1 ? '' : 's'}`}
+          </h2>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100"
+          aria-label="Close cart"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
 
-      <div
-        className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
-        }`}
-        onClick={toggleDrawer}
-        aria-hidden="true"
-      />
-
-      <div
-        className={`fixed bottom-0 right-0 z-50 h-screen w-full max-w-md bg-card shadow-lg transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between border-b border-border p-4">
-            <h2 className="text-lg font-semibold">Shopping Cart</h2>
-            <button
-              onClick={toggleDrawer}
-              className="rounded-lg p-1 hover:bg-muted"
-              aria-label="Close cart"
-            >
-              <X className="h-5 w-5" />
-            </button>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+        {items.length === 0 ? (
+          <div className="flex h-40 flex-col items-center justify-center gap-3 text-center">
+            <div>
+              <p className="text-sm font-medium text-slate-900">Your cart is empty</p>
+              <p className="mt-1 text-sm text-muted-foreground">Browse the catalog and add a compound.</p>
+            </div>
+            <Button variant="outline" onClick={returnToCatalog} className="min-h-11 rounded-2xl">
+              <ArrowLeft className="h-4 w-4" />
+              Return to catalog
+            </Button>
           </div>
-
-          <div className="flex-1 overflow-y-auto p-4">
-            {items.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-                <p className="text-muted-foreground">Your cart is empty</p>
-                <Button variant="outline" onClick={returnToCatalog} className="min-h-11">
-                  <ArrowLeft className="h-4 w-4" />
-                  Return to catalog
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.id} className="motion-item-in flex gap-3 rounded-lg border border-border p-3">
-                    <div className="flex-1">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        ${(item.priceInCents / 100).toFixed(2)} each
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                          className="rounded px-2 py-1 hover:bg-muted"
-                        >
-                          −
-                        </button>
-                        <span className="w-8 text-center font-medium">{item.quantity}</span>
-                        <button
-                          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                          className="rounded px-2 py-1 hover:bg-muted"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <button
-                        onClick={() => onRemoveItem(item.id)}
-                        className="rounded p-1 text-destructive hover:bg-destructive/10"
-                        aria-label="Remove item"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+        ) : (
+          <div className="space-y-3">
+            {items.map((item) => (
+              <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate font-medium text-slate-950">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground">${(item.priceInCents / 100).toFixed(2)} each</p>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center rounded-full bg-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                      className="flex h-10 w-10 items-center justify-center"
+                      aria-label={`Decrease ${item.name}`}
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="w-6 text-center text-sm font-semibold">{item.quantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                      className="flex h-10 w-10 items-center justify-center"
+                      aria-label={`Increase ${item.name}`}
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
                   </div>
-                ))}
+                  <button
+                    type="button"
+                    onClick={() => onRemoveItem(item.id)}
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-destructive hover:bg-destructive/10"
+                    aria-label={`Remove ${item.name}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-            )}
+            ))}
           </div>
+        )}
+      </div>
 
-          <div className="border-t border-border p-4">
-            <div className="mb-4 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal:</span>
-                <span className="font-medium">${totalInDollars}</span>
-              </div>
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total:</span>
-                <span className="text-primary">${totalInDollars}</span>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Button
-                onClick={onCheckout}
-                disabled={items.length === 0}
-                className="w-full"
-              >
-                Proceed to Checkout
-              </Button>
-              <Button
-                variant="outline"
-                onClick={returnToCatalog}
-                className="w-full"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Return to catalog
-              </Button>
-            </div>
-          </div>
+      <div className="border-t border-slate-200/80 px-4 py-4">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">Total</span>
+          <span className="text-lg font-semibold text-slate-950">${totalInDollars}</span>
+        </div>
+        <div className="space-y-2">
+          <Button onClick={onCheckout} disabled={items.length === 0} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
+            Checkout securely
+          </Button>
+          <Button variant="outline" onClick={returnToCatalog} className="h-12 w-full rounded-2xl">
+            <ArrowLeft className="h-4 w-4" />
+            Return to catalog
+          </Button>
         </div>
       </div>
-    </>
+    </aside>
   )
 }
