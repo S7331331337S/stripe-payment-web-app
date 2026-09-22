@@ -59,7 +59,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="app-shell min-h-dvh bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-background/88 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-slate-200/80 bg-background/88 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
           {isProductPage ? (
             <Link
@@ -97,7 +97,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main id="top" className="mx-auto w-full max-w-lg px-4 pb-[calc(5.25rem+env(safe-area-inset-bottom))]">
+      <main id="top" className="mx-auto w-full max-w-lg px-4 pt-[calc(3.5rem+env(safe-area-inset-top))] pb-[calc(5.25rem+env(safe-area-inset-bottom))]">
         {children}
       </main>
 
@@ -170,6 +170,7 @@ function FooterButton({
     <button
       type="button"
       onClick={onClick}
+      aria-label={label}
       aria-current={active ? 'page' : undefined}
       className={cn(
         'relative flex min-h-11 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors',
