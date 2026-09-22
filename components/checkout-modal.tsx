@@ -9,7 +9,7 @@ interface CheckoutModalProps {
   onClose: () => void
 }
 
-export function CheckoutModal({ productId, isOpen, onClose }: CheckoutModalProps) {
+export function CheckoutModal({ items, isOpen, onClose }: CheckoutModalProps) {
   if (!isOpen || !items.length) return null
 
   return (

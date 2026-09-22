@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Check, ShieldCheck } from 'lucide-react'
+import { AddToCartButton } from '@/components/add-to-cart-button'
 import { PRODUCTS } from '@/lib/products'
 
 export function generateStaticParams() {
@@ -36,6 +37,7 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Current availability</p>
               <p className="mt-3 text-4xl font-semibold tracking-tight text-slate-950">${price}</p>
               <p className="mt-2 text-sm text-emerald-700">{product.stock > 0 ? `${product.stock} units available` : 'Currently unavailable'}</p>
+              <div className="mt-5"><AddToCartButton product={product} /></div>
             </div>
           </div>
           <div className="mt-12 grid gap-8 border-t border-slate-200/80 pt-8 sm:grid-cols-2">

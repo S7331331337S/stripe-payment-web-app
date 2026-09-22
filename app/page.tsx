@@ -5,24 +5,12 @@ import { ArrowDownRight, FlaskConical, LockKeyhole, Menu, Package, ShoppingBag, 
 import { ProductCard } from '@/components/product-card'
 import { CartDrawer } from '@/components/cart-drawer'
 import { CheckoutModal } from '@/components/checkout-modal'
+import { useCart } from '@/components/cart-provider'
 import { PRODUCTS } from '@/lib/products'
-import type { Product } from '@/lib/products'
-
-interface CartItem extends Product { quantity: number }
 
 export default function StorefrontPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
-
-  const handleAddToCart = (product: Product) => setCartItems((prev) => {
-    const existing = prev.find((item) => item.id === product.id)
-    return existing ? prev.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item) : [...prev, { ...product, quantity: 1 }]
-  })
-  const handleRemoveItem = (productId: string) => setCartItems((prev) => prev.filter((item) => item.id !== productId))
-  const handleUpdateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) return handleRemoveItem(productId)
-    setCartItems((prev) => prev.map((item) => item.id === productId ? { ...item, quantity } : item))
-  }
+  const { cartItems, addToCart, removeItem, updateQuantity } = useCart()
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -32,7 +20,7 @@ export default function StorefrontPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white"><FlaskConical className="h-4 w-4" /></div>
             <div><p className="text-sm font-semibold tracking-tight">G&apos;s Stock</p><p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Clinical supply</p></div>
           </div>
-          <div className="flex items-center gap-2"><span className="hidden text-xs text-muted-foreground sm:block">Private catalog</span><button aria-label="Open menu" className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/60"><Menu className="h-4 w-4" /></button></div>
+          <div className="flex items-center gap-2"><span className="hidden text-xs text-muted-foreground sm:block">Private catalog</span><nav className="flex items-center gap-1"><a href="#catalog" className="hidden min-h-11 items-center px-3 text-xs font-medium text-slate-600 hover:text-slate-950 sm:flex">Catalog</a><a href="#standards" className="hidden min-h-11 items-center px-3 text-xs font-medium text-slate-600 hover:text-slate-950 sm:flex">Standards</a><button aria-label="Open menu" className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/60"><Menu className="h-4 w-4" /></button></nav></div>
         </div>
       </header>
 
@@ -54,13 +42,13 @@ export default function StorefrontPage() {
 
         <section id="catalog" className="scroll-mt-24">
           <div className="mb-7 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.22em] text-indigo-700">The collection</p><h2 className="mt-2 font-serif text-4xl tracking-[-0.04em] text-slate-950">Browse the catalog</h2></div><div className="hidden items-center gap-2 text-xs text-slate-500 sm:flex"><ShoppingBag className="h-4 w-4" /> {PRODUCTS.length} compounds</div></div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{PRODUCTS.map((product) => <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />)}</div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{PRODUCTS.map((product) => <ProductCard key={product.id} product={product} onAddToCart={addToCart} />)}</div>
         </section>
 
-        <section className="mt-16 rounded-[1.5rem] bg-slate-950 p-7 text-white sm:p-10"><p className="text-xs uppercase tracking-[0.2em] text-indigo-200">A note on responsible research</p><h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight sm:text-4xl">Precision starts with knowing exactly what you are ordering.</h2><p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">Products in this catalog are intended for research use only. Please review each detail sheet and all applicable handling and compliance requirements before ordering.</p></section>
+        <section id="standards" className="mt-16 scroll-mt-24 rounded-[1.5rem] bg-slate-950 p-7 text-white sm:p-10"><p className="text-xs uppercase tracking-[0.2em] text-indigo-200">A note on responsible research</p><h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight sm:text-4xl">Precision starts with knowing exactly what you are ordering.</h2><p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">Products in this catalog are intended for research use only. Please review each detail sheet and all applicable handling and compliance requirements before ordering.</p></section>
       </main>
 
-      <CartDrawer items={cartItems} onRemoveItem={handleRemoveItem} onUpdateQuantity={handleUpdateQuantity} onCheckout={() => cartItems.length > 0 && setIsCheckoutOpen(true)} />
+      <CartDrawer items={cartItems} onRemoveItem={removeItem} onUpdateQuantity={updateQuantity} onCheckout={() => cartItems.length > 0 && setIsCheckoutOpen(true)} />
       <CheckoutModal items={cartItems.map(({ id, quantity }) => ({ productId: id, quantity }))} isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
     </div>
   )
