@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ArrowDownRight, FlaskConical, LockKeyhole, Menu, Package, ShoppingBag, Sparkles, X } from 'lucide-react'
-import { ProductCard } from '@/components/product-card'
+import { Catalog } from '@/components/catalog'
 import { CartDrawer } from '@/components/cart-drawer'
 import { CheckoutModal } from '@/components/checkout-modal'
 import { useCart } from '@/components/cart-provider'
@@ -67,10 +67,10 @@ export default function StorefrontPage() {
 
         <section id="catalog" className="scroll-mt-24">
           <div className="mb-7 flex items-end justify-between"><div><p className="text-xs font-semibold uppercase tracking-[0.22em] text-indigo-700">The collection</p><h2 className="mt-2 font-serif text-4xl tracking-[-0.04em] text-slate-950">Browse the catalog</h2></div><div className="hidden items-center gap-2 text-xs text-slate-500 sm:flex"><ShoppingBag className="h-4 w-4" /> {PRODUCTS.length} compounds</div></div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{PRODUCTS.map((product) => <ProductCard key={product.id} product={product} onAddToCart={addToCart} />)}</div>
+          <Catalog products={PRODUCTS} onAddToCart={addToCart} />
         </section>
 
-        <section id="standards" className="mt-16 scroll-mt-24 rounded-[1.5rem] bg-slate-950 p-7 text-white sm:p-10"><p className="text-xs uppercase tracking-[0.2em] text-indigo-200">A note on responsible research</p><h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight sm:text-4xl">Precision starts with knowing exactly what you are ordering.</h2><p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">Products in this catalog are intended for research use only. Please review each detail sheet and all applicable handling and compliance requirements before ordering.</p></section>
+        <section id="standards" className="mt-16 scroll-mt-24 rounded-[1.5rem] bg-slate-950 p-7 text-white sm:p-10"><p className="text-xs uppercase tracking-[0.2em] text-indigo-200">A note on responsible research</p><h2 className="mt-4 max-w-xl font-serif text-3xl leading-tight sm:text-4xl">Precision starts with knowing exactly what you are ordering.</h2><p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">Products in this catalog are intended for research use only. Please review each detail sheet and all applicable handling and compliance requirements before ordering.</p><div className="mt-8 grid gap-4 sm:grid-cols-3">{[{ title: 'Clear catalog notes', text: 'Product details and availability are visible before checkout.' }, { title: 'Protected payments', text: 'Checkout is securely handled by Stripe.' }, { title: 'Order updates', text: 'Order confirmation is provided during the checkout process.' }].map((item) => <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-4"><p className="font-medium">{item.title}</p><p className="mt-2 text-sm leading-6 text-slate-300">{item.text}</p></div>)}</div></section>
       </main>
 
       <CartDrawer items={cartItems} onRemoveItem={removeItem} onUpdateQuantity={updateQuantity} onCheckout={() => cartItems.length > 0 && setIsCheckoutOpen(true)} />
