@@ -157,10 +157,138 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   html,
   body {
     @apply bg-background text-foreground;
     max-width: 100%;
     overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .reveal-load {
+    animation: motion-fade-up 780ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .reveal-clip {
+    overflow: hidden;
+    padding-bottom: 0.12em;
+  }
+
+  .reveal-clip-inner {
+    display: block;
+    animation: motion-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+    transition:
+      opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-on-scroll.is-revealed {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .motion-float-slow {
+    animation: motion-float 16s ease-in-out infinite;
+  }
+
+  .motion-float-slower {
+    animation: motion-float 22s ease-in-out infinite reverse;
+  }
+
+  .motion-badge-pop {
+    animation: motion-pop 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .motion-item-in {
+    animation: motion-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .motion-sheet-in {
+    animation: motion-sheet 440ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes motion-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes motion-rise {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes motion-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(10px, -12px, 0);
+  }
+}
+
+@keyframes motion-pop {
+  0% {
+    transform: scale(0.72);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes motion-sheet {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal-load,
+  .reveal-clip-inner,
+  .motion-float-slow,
+  .motion-float-slower,
+  .motion-badge-pop,
+  .motion-item-in,
+  .motion-sheet-in {
+    animation: none !important;
+  }
+
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }
