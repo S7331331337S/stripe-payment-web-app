@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowDownRight,
   FlaskConical,
@@ -27,6 +27,16 @@ export default function StorefrontPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { cartItems, addToCart } = useCart()
+
+  // Escape closes the mobile menu, matching the cart drawer and checkout modal.
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMenuOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [isMenuOpen])
 
   const checkoutItems = cartItems.map(({ id, quantity }) => ({ productId: id, quantity }))
   const inStockCount = PRODUCTS.filter((product) => product.stock > 0).length
