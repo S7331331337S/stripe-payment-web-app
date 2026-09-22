@@ -53,10 +53,12 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         <Button
           onClick={handleAddToCart}
           disabled={!inStock}
-          className="h-11 flex-1 rounded-2xl bg-slate-950 text-white"
+          className="h-11 flex-1 rounded-2xl bg-slate-950 text-white transition-transform active:scale-[0.98]"
         >
-          <ShoppingCart className="h-4 w-4" />
-          {isAdded ? 'Added' : 'Add'}
+          <ShoppingCart className={`h-4 w-4 transition-transform duration-300 ${isAdded ? 'scale-110' : ''}`} />
+          <span key={isAdded ? 'added' : 'add'} className="motion-item-in">
+            {isAdded ? 'Added' : 'Add'}
+          </span>
         </Button>
         <Link
           href={`/products/${product.id}`}

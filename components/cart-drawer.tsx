@@ -1,6 +1,6 @@
 'use client'
 
-import { Minus, Plus, Trash2, X } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/lib/products'
@@ -16,6 +16,7 @@ interface CartDrawerProps {
   onRemoveItem: (productId: string) => void
   onUpdateQuantity: (productId: string, quantity: number) => void
   onCheckout: () => void
+  onReturnToCatalog?: () => void
 }
 
 export function CartDrawer({
@@ -25,10 +26,22 @@ export function CartDrawer({
   onRemoveItem,
   onUpdateQuantity,
   onCheckout,
+  onReturnToCatalog,
 }: CartDrawerProps) {
   const total = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
   const totalInDollars = (total / 100).toFixed(2)
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
+
+  function returnToCatalog() {
+    onClose()
+    if (onReturnToCatalog) {
+      onReturnToCatalog()
+      return
+    }
+    if (typeof window !== 'undefined') {
+      window.location.assign('/#catalog')
+    }
+  }
 
   return (
     <aside
@@ -58,14 +71,20 @@ export function CartDrawer({
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
         {items.length === 0 ? (
-          <div className="flex h-40 flex-col items-center justify-center text-center">
-            <p className="text-sm font-medium text-slate-900">Your cart is empty</p>
-            <p className="mt-1 text-sm text-muted-foreground">Browse the catalog and add a compound.</p>
+          <div className="flex h-40 flex-col items-center justify-center gap-3 text-center">
+            <div>
+              <p className="text-sm font-medium text-slate-900">Your cart is empty</p>
+              <p className="mt-1 text-sm text-muted-foreground">Browse the catalog and add a compound.</p>
+            </div>
+            <Button variant="outline" onClick={returnToCatalog} className="min-h-11 rounded-2xl">
+              <ArrowLeft className="h-4 w-4" />
+              Return to catalog
+            </Button>
           </div>
         ) : (
           <div className="space-y-3">
             {items.map((item) => (
-              <div key={item.id} className="flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
+              <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate font-medium text-slate-950">{item.name}</h3>
                   <p className="text-sm text-muted-foreground">${(item.priceInCents / 100).toFixed(2)} each</p>
@@ -110,9 +129,15 @@ export function CartDrawer({
           <span className="text-sm text-muted-foreground">Total</span>
           <span className="text-lg font-semibold text-slate-950">${totalInDollars}</span>
         </div>
-        <Button onClick={onCheckout} disabled={items.length === 0} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
-          Checkout securely
-        </Button>
+        <div className="space-y-2">
+          <Button onClick={onCheckout} disabled={items.length === 0} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
+            Checkout securely
+          </Button>
+          <Button variant="outline" onClick={returnToCatalog} className="h-12 w-full rounded-2xl">
+            <ArrowLeft className="h-4 w-4" />
+            Return to catalog
+          </Button>
+        </div>
       </div>
     </aside>
   )

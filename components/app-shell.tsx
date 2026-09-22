@@ -133,6 +133,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onCheckout={() => {
           if (cartItems.length > 0) openCheckout()
         }}
+        onReturnToCatalog={goCatalog}
       />
       <ProductChat open={panel === 'chat'} onClose={closePanel} />
       <CheckoutModal

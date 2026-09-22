@@ -20,10 +20,12 @@ export function AddToCartButton({ product }: { product: Product }) {
         openCart()
         setTimeout(() => setAdded(false), 1800)
       }}
-      className="h-12 w-full rounded-2xl bg-slate-950 text-white hover:bg-slate-800"
+      className="h-12 w-full rounded-2xl bg-slate-950 text-white transition-transform hover:bg-slate-800 active:scale-[0.98]"
     >
-      <ShoppingCart className="h-4 w-4" />
-      {added ? 'Added to cart' : product.stock > 0 ? 'Add to cart' : 'Out of stock'}
+      <ShoppingCart className={`h-4 w-4 transition-transform duration-300 ${added ? 'scale-110' : ''}`} />
+      <span key={added ? 'added' : 'idle'} className="motion-item-in">
+        {added ? 'Added to cart' : product.stock > 0 ? 'Add to cart' : 'Out of stock'}
+      </span>
     </Button>
   )
 }

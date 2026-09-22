@@ -13,7 +13,7 @@ export function CheckoutModal({ items, isOpen, onClose }: CheckoutModalProps) {
   if (!isOpen || !items.length) return null
 
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col bg-background pt-[env(safe-area-inset-top)]">
+    <div className="motion-sheet-in fixed inset-0 z-[60] flex flex-col bg-background pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex w-full max-w-lg items-center justify-between border-b border-slate-200/80 px-4 py-3">
         <h2 className="text-lg font-semibold tracking-tight">Checkout</h2>
         <button
