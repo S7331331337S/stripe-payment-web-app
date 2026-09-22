@@ -44,6 +44,18 @@ export default function StorefrontPage() {
         </div>
 
         <div className="relative space-y-5">
+          <div className="grid grid-cols-3 gap-2">
+            {TRUST_POINTS.map(({ icon: Icon, title, text }) => (
+              <div key={title} className="flex flex-col items-center text-center">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <p className="mt-2 text-[11px] font-semibold leading-tight text-foreground">{title}</p>
+                <p className="mt-1 text-[10px] leading-4 text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+
           <a
             href="#catalog"
             className="inline-flex min-h-12 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-medium text-background"
@@ -51,20 +63,6 @@ export default function StorefrontPage() {
             Browse catalog
             <ArrowDown className="h-4 w-4" />
           </a>
-
-          <div className="grid gap-3">
-            {TRUST_POINTS.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand">
-                  <Icon className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{title}</p>
-                  <p className="text-xs text-muted-foreground">{text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
