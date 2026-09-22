@@ -1,13 +1,22 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { AppShell } from '@/components/app-shell'
+import { AppUIProvider } from '@/components/app-ui'
 import { CartProvider } from '@/components/cart-provider'
-import { ProductChat } from '@/components/product-chat'
 
 export const metadata: Metadata = {
   title: "G's Stock | Clinical Research Supply",
   description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
   generator: 'v0.app',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: "G's Stock",
+  },
+  formatDetection: {
+    telephone: false,
+  },
   icons: {
     icon: [
       {
@@ -30,11 +39,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  viewportFit: 'cover',
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
+    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
   ],
 }
 
@@ -47,8 +56,9 @@ export default function RootLayout({
     <html lang="en" className="light">
       <body className="antialiased">
         <CartProvider>
-          {children}
-          <ProductChat />
+          <AppUIProvider>
+            <AppShell>{children}</AppShell>
+          </AppUIProvider>
         </CartProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
