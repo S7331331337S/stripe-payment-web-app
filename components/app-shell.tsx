@@ -27,6 +27,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('hashchange', syncHash)
   }, [pathname])
 
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      if (isCheckoutOpen) {
+        closeCheckout()
+        return
+      }
+      closePanel()
+    }
+
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [isCheckoutOpen, closeCheckout, closePanel])
+
   const isProductPage = pathname.startsWith('/products/')
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 

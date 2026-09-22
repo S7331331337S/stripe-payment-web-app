@@ -26,27 +26,30 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
 
   async function sendMessage(event: React.FormEvent) {
     event.preventDefault()
-    if (!input.trim() || loading) return
-    const nextMessages = [...messages, { role: 'user' as const, content: input.trim() }]
+    const question = input.trim()
+    if (!question || loading) return
+
+    const nextMessages = [...messages, { role: 'user' as const, content: question }]
     setMessages(nextMessages)
     setInput('')
     setLoading(true)
+
     try {
       const response = await fetch('/api/product-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: nextMessages }),
       })
-      const data = (await response.json()) as { message?: string }
-      setMessages((current) => [
-        ...current,
-        { role: 'assistant', content: data.message ?? 'I could not answer that just now.' },
-      ])
-    } catch {
-      setMessages((current) => [
-        ...current,
-        { role: 'assistant', content: 'I could not connect right now. Please review the product detail sheets.' },
-      ])
+      const data = (await response.json().catch(() => null)) as { message?: string; error?: string } | null
+      const reply = data?.message
+      if (!response.ok || !reply) {
+        throw new Error(data?.error ?? 'The product concierge is unavailable.')
+      }
+
+      setMessages((current) => [...current, { role: 'assistant', content: reply }])
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'I could not connect right now.'
+      setMessages((current) => [...current, { role: 'assistant', content: message }])
     } finally {
       setLoading(false)
     }
@@ -76,7 +79,7 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
           <X className="h-5 w-5" />
         </button>
       </div>
-      <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 pb-3">
+      <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 pb-3" aria-live="polite">
         {messages.map((message, index) => (
           <div
             key={`${message.role}-${index}`}
@@ -93,15 +96,16 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
       <form onSubmit={sendMessage} className="flex gap-2 border-t border-slate-200/80 p-3">
         <input
           aria-label="Ask about products"
+          disabled={loading}
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="Ask about a product..."
-          className="min-h-11 min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white px-3 text-base outline-none focus:border-indigo-500"
+          className="min-h-11 min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white px-3 text-base outline-none focus:border-indigo-500 disabled:bg-slate-50"
         />
         <button
           type="submit"
           aria-label="Send question"
-          disabled={loading}
+          disabled={loading || !input.trim()}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white disabled:opacity-50"
         >
           <Send className="h-4 w-4" />
