@@ -46,15 +46,22 @@ export function CartDrawer({ items, onRemoveItem, onUpdateQuantity, onCheckout, 
       >
         <ShoppingCart className="h-6 w-6" />
         {items.length > 0 && (
-          <span className="absolute top-0 right-0 inline-flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground">
+          <span
+            key={items.length}
+            className="motion-badge-pop absolute top-0 right-0 inline-flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-xs font-bold text-destructive-foreground"
+          >
             {items.length}
           </span>
         )}
       </button>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50" onClick={toggleDrawer} aria-hidden="true" />
-      )}
+      <div
+        className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${
+          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={toggleDrawer}
+        aria-hidden="true"
+      />
 
       <div
         className={`fixed bottom-0 right-0 z-50 h-screen w-full max-w-md bg-card shadow-lg transition-transform duration-300 ease-in-out ${
@@ -85,7 +92,7 @@ export function CartDrawer({ items, onRemoveItem, onUpdateQuantity, onCheckout, 
             ) : (
               <div className="space-y-4">
                 {items.map((item) => (
-                  <div key={item.id} className="flex gap-3 rounded-lg border border-border p-3">
+                  <div key={item.id} className="motion-item-in flex gap-3 rounded-lg border border-border p-3">
                     <div className="flex-1">
                       <h3 className="font-medium">{item.name}</h3>
                       <p className="text-sm text-muted-foreground">

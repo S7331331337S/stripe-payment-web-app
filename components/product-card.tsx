@@ -59,11 +59,13 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           onClick={handleAddToCart}
           disabled={product.stock === 0}
           variant={isAdded ? 'default' : 'outline'}
-          className="flex-1"
+          className="flex-1 transition-transform active:scale-[0.98]"
           size="sm"
         >
-          <ShoppingCart className="h-4 w-4" />
-          {isAdded ? 'Added!' : 'Add to Cart'}
+          <ShoppingCart className={`h-4 w-4 transition-transform duration-300 ${isAdded ? 'scale-110' : ''}`} />
+          <span key={isAdded ? 'added' : 'add'} className="motion-item-in">
+            {isAdded ? 'Added!' : 'Add to Cart'}
+          </span>
         </Button>
         <Link
           href={`/products/${product.id}`}

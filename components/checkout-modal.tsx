@@ -14,9 +14,9 @@ export function CheckoutModal({ items, isOpen, onClose }: CheckoutModalProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} aria-hidden="true" />
+      <div className="fixed inset-0 z-40 bg-black/50 motion-item-in" onClick={onClose} aria-hidden="true" />
       <div className="fixed inset-0 z-50 flex items-end">
-        <div className="w-full max-h-[90vh] bg-card rounded-t-lg shadow-lg overflow-hidden">
+        <div className="motion-sheet-in w-full max-h-[90vh] overflow-hidden rounded-t-lg bg-card shadow-lg">
           <div className="flex items-center justify-between border-b border-border p-4">
             <h2 className="text-lg font-semibold">Complete Your Purchase</h2>
             <button
