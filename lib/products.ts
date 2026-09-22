@@ -1,3 +1,7 @@
+export function stripeCatalogLookupKey(productId: string): string {
+  return `catalog_${productId}`
+}
+
 export interface Product {
   id: string
   name: string
