@@ -46,6 +46,7 @@ export function CartDrawer({
   return (
     <aside
       aria-hidden={!open}
+      inert={!open}
       className={cn(
         'fixed inset-x-0 z-[46] mx-auto flex w-full max-w-lg flex-col rounded-t-3xl border border-slate-200/80 bg-background shadow-[0_-18px_50px_-20px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out',
         'bottom-[calc(4.25rem+env(safe-area-inset-bottom))] max-h-[min(38rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom)))]',
