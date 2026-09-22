@@ -4,9 +4,23 @@ import './globals.css'
 import { CartProvider } from '@/components/cart-provider'
 import { ProductChat } from '@/components/product-chat'
 
+const metadataBase = process.env.VERCEL_URL ? new URL(`https://${process.env.VERCEL_URL}`) : undefined
+
 export const metadata: Metadata = {
+  metadataBase,
   title: "G's Stock | Clinical Research Supply",
   description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
+  openGraph: {
+    title: "G's Stock | Clinical Research Supply",
+    description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
+    siteName: "G's Stock",
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "G's Stock | Clinical Research Supply",
+    description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
+  },
   generator: 'v0.app',
   icons: {
     icon: [
