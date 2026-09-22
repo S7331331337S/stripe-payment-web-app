@@ -25,11 +25,9 @@ export function Reveal({
     }
 
     const reveal = () => setVisible(true)
-    const fallback = window.setTimeout(reveal, 2400)
 
     if (!('IntersectionObserver' in window)) {
       reveal()
-      window.clearTimeout(fallback)
       return
     }
 
@@ -38,16 +36,12 @@ export function Reveal({
         if (!entry?.isIntersecting) return
         reveal()
         observer.disconnect()
-        window.clearTimeout(fallback)
       },
       { threshold: 0.18, rootMargin: '0px 0px -8% 0px' },
     )
 
     observer.observe(element)
-    return () => {
-      observer.disconnect()
-      window.clearTimeout(fallback)
-    }
+    return () => observer.disconnect()
   }, [])
 
   return (

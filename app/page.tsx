@@ -57,9 +57,11 @@ export default function StorefrontPage() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile navigation"
+          aria-hidden={!isMenuOpen}
+          inert={!isMenuOpen}
           className={cn(
             'grid overflow-hidden border-slate-200/70 transition-[grid-template-rows,opacity] duration-300 ease-out sm:hidden',
-            isMenuOpen ? 'grid-rows-[1fr] border-t opacity-100' : 'grid-rows-[0fr] opacity-0',
+            isMenuOpen ? 'grid-rows-[1fr] border-t opacity-100' : 'pointer-events-none grid-rows-[0fr] opacity-0',
           )}
         >
           <div className="min-h-0">
@@ -81,7 +83,7 @@ export default function StorefrontPage() {
             </div>
             <h1 className="font-serif text-[clamp(3.2rem,14vw,7rem)] leading-[0.88] tracking-[-0.06em] text-slate-950">
               <span className="reveal-clip block">
-                <span className="reveal-clip-inner" style={{ animationDelay: '110ms' }}>A clearer standard</span>
+                <span className="reveal-clip-inner" style={{ animationDelay: '110ms' }}>A clearer standard </span>
               </span>
               <span className="reveal-clip block">
                 <span className="reveal-clip-inner" style={{ animationDelay: '200ms' }}>for modern research.</span>
