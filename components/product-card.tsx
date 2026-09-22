@@ -25,7 +25,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const stockColor = product.stock > 0 ? 'text-emerald-700' : 'text-red-600'
 
   return (
-    <article className="group relative flex flex-col gap-4 overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/70 p-5 shadow-[0_12px_40px_-20px_rgba(42,54,92,0.3)] backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(42,54,92,0.4)]">
+    <article className="group relative min-w-0 max-w-full flex flex-col gap-4 overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/70 p-5 shadow-[0_12px_40px_-20px_rgba(42,54,92,0.3)] backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(42,54,92,0.4)]">
       <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-indigo-200/60 blur-3xl transition-opacity group-hover:opacity-90" />
       <div className="pointer-events-none absolute -bottom-12 -left-10 h-28 w-28 rounded-full bg-sky-100/70 blur-3xl" />
       <div className="flex items-start justify-between gap-2">
