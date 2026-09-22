@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ShoppingCart, Trash2, X } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Product } from '@/lib/products'
 
@@ -14,10 +14,23 @@ interface CartDrawerProps {
   onRemoveItem: (productId: string) => void
   onUpdateQuantity: (productId: string, quantity: number) => void
   onCheckout: () => void
+  onReturnToCatalog?: () => void
 }
 
-export function CartDrawer({ items, onRemoveItem, onUpdateQuantity, onCheckout }: CartDrawerProps) {
+export function CartDrawer({ items, onRemoveItem, onUpdateQuantity, onCheckout, onReturnToCatalog }: CartDrawerProps) {
   const [isOpen, setIsOpen] = useState(false)
+
+  const returnToCatalog = () => {
+    setIsOpen(false)
+    if (onReturnToCatalog) {
+      onReturnToCatalog()
+      return
+    }
+
+    if (typeof window !== 'undefined') {
+      window.location.assign('/#catalog')
+    }
+  }
 
   const total = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
   const totalInDollars = (total / 100).toFixed(2)
@@ -62,8 +75,12 @@ export function CartDrawer({ items, onRemoveItem, onUpdateQuantity, onCheckout }
 
           <div className="flex-1 overflow-y-auto p-4">
             {items.length === 0 ? (
-              <div className="flex h-full items-center justify-center">
-                <p className="text-center text-muted-foreground">Your cart is empty</p>
+              <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+                <p className="text-muted-foreground">Your cart is empty</p>
+                <Button variant="outline" onClick={returnToCatalog} className="min-h-11">
+                  <ArrowLeft className="h-4 w-4" />
+                  Return to catalog
+                </Button>
               </div>
             ) : (
               <div className="space-y-4">
@@ -116,13 +133,23 @@ export function CartDrawer({ items, onRemoveItem, onUpdateQuantity, onCheckout }
                 <span className="text-primary">${totalInDollars}</span>
               </div>
             </div>
-            <Button
-              onClick={onCheckout}
-              disabled={items.length === 0}
-              className="w-full"
-            >
-              Proceed to Checkout
-            </Button>
+            <div className="space-y-2">
+              <Button
+                onClick={onCheckout}
+                disabled={items.length === 0}
+                className="w-full"
+              >
+                Proceed to Checkout
+              </Button>
+              <Button
+                variant="outline"
+                onClick={returnToCatalog}
+                className="w-full"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Return to catalog
+              </Button>
+            </div>
           </div>
         </div>
       </div>
