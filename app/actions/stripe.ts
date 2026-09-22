@@ -34,17 +34,22 @@ export async function startCheckoutSession(
 
   try {
     const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded',
-      redirect_on_completion: 'never',
-      line_items: lineItems,
+      ui_mode: 'hosted_page',
       mode: 'payment',
-      customer_creation: 'always',
-      shipping_address_collection: {
-        allowed_countries: ['US'],
-      },
+      billing_address_collection: 'auto',
       phone_number_collection: {
-        enabled: true,
+        enabled: false,
       },
+      automatic_tax: {
+        enabled: false,
+      },
+      allow_promotion_codes: false,
+      submit_type: 'auto',
+      integration_identifier: 'hosted_web_0008',
+      origin_context: 'web',
+      success_url: 'https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'https://example.com/cancel',
+      line_items: lineItems,
     })
 
     if (typeof session.client_secret !== 'string' || session.client_secret.length === 0) {
