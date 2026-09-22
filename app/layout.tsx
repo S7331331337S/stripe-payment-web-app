@@ -2,8 +2,9 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Instrument_Serif, Inter } from 'next/font/google'
 import './globals.css'
+import { AppShell } from '@/components/app-shell'
+import { AppUIProvider } from '@/components/app-ui'
 import { CartProvider } from '@/components/cart-provider'
-import { ProductChat } from '@/components/product-chat'
 import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl } from '@/lib/site'
 
 const sans = Inter({
@@ -44,6 +45,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: SITE_NAME,
+  },
+  formatDetection: {
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
@@ -57,8 +66,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  // Lets the shell paint under the notch and home indicator.
+  viewportFit: 'cover',
+  // The shell is light-only (`<html className="light">`), so declaring both
+  // would tell the browser to render form controls for a dark theme that the
+  // page never applies.
   colorScheme: 'light',
-  themeColor: '#ffffff',
+  themeColor: '#fafafa',
 }
 
 export default function RootLayout({
@@ -70,8 +84,9 @@ export default function RootLayout({
     <html lang="en" className={`light ${sans.variable} ${serif.variable}`}>
       <body className="antialiased">
         <CartProvider>
-          {children}
-          <ProductChat />
+          <AppUIProvider>
+            <AppShell>{children}</AppShell>
+          </AppUIProvider>
         </CartProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

@@ -29,74 +29,63 @@ export function CheckoutModal({ items, isOpen, onClose }: CheckoutModalProps) {
     if (!isOpen) setIsComplete(false)
   }, [isOpen])
 
-  // Escape closes, and the page behind the modal stops scrolling.
+  // The page behind the sheet stops scrolling while it is open. Escape is
+  // handled by AppShell, which also owns the checkout open state.
   useEffect(() => {
     if (!isOpen) return
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', onKeyDown)
-
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     closeButtonRef.current?.focus()
-
     return () => {
-      document.removeEventListener('keydown', onKeyDown)
       document.body.style.overflow = previousOverflow
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
 
   if (!isOpen) return null
+  // Once paid the cart is empty, so the success panel must not be gated on it.
   if (!isComplete && items.length === 0) return null
 
   return (
-    <>
-      <div className="motion-item-in fixed inset-0 z-40 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="fixed inset-0 z-50 flex items-end justify-center">
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="checkout-modal-title"
-          className="motion-sheet-in max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-t-[1.5rem] bg-card shadow-2xl"
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkout-modal-title"
+      className="motion-sheet-in fixed inset-0 z-[60] flex flex-col bg-background pt-[env(safe-area-inset-top)]"
+    >
+      <div className="mx-auto flex w-full max-w-lg items-center justify-between border-b border-slate-200/80 px-4 py-3">
+        <h2 id="checkout-modal-title" className="text-lg font-semibold tracking-tight">
+          {isComplete ? 'Order confirmed' : 'Checkout'}
+        </h2>
+        <button
+          ref={closeButtonRef}
+          type="button"
+          onClick={onClose}
+          className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100"
+          aria-label="Close checkout"
         >
-          <div className="flex items-center justify-between border-b border-border p-4">
-            <h2 id="checkout-modal-title" className="text-lg font-semibold">
-              {isComplete ? 'Order confirmed' : 'Complete your purchase'}
-            </h2>
-            <button
-              ref={closeButtonRef}
-              type="button"
-              onClick={onClose}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="Close checkout"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="max-h-[calc(90vh-68px)] overflow-y-auto">
-            {isComplete ? (
-              <div className="p-8 text-center">
-                <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600" aria-hidden="true" />
-                <h3 className="mt-5 font-serif text-2xl tracking-tight text-foreground">
-                  Thank you — your payment went through.
-                </h3>
-                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-                  A Stripe receipt is on its way to the email you provided. We will follow up with dispatch
-                  details for your order.
-                </p>
-                <Button className="mt-7" onClick={onClose}>
-                  Back to the catalog
-                </Button>
-              </div>
-            ) : (
-              <Checkout items={items} onComplete={handleComplete} />
-            )}
-          </div>
-        </div>
+          <X className="h-5 w-5" />
+        </button>
       </div>
-    </>
+
+      <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom)]">
+        {isComplete ? (
+          <div className="px-6 py-12 text-center">
+            <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600" aria-hidden="true" />
+            <h3 className="mt-5 font-serif text-2xl tracking-tight text-foreground">
+              Thank you — your payment went through.
+            </h3>
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
+              A Stripe receipt is on its way to the email you provided. We will follow up with dispatch
+              details for your order.
+            </p>
+            <Button className="mt-7 min-h-11" onClick={onClose}>
+              Back to the catalog
+            </Button>
+          </div>
+        ) : (
+          <Checkout items={items} onComplete={handleComplete} />
+        )}
+      </div>
+    </div>
   )
 }

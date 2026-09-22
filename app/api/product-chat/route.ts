@@ -38,6 +38,15 @@ function isRateLimited(key: string): boolean {
   return entry.count > RATE_LIMIT.maxRequests
 }
 
+/**
+ * Failure responses carry the text under both `message` and `error`: the chat
+ * client reads `error` first and falls back to `message`. Emitting both keeps
+ * the panel showing the real reason instead of a generic fallback.
+ */
+function failure(text: string, status: number, headers?: HeadersInit) {
+  return Response.json({ message: text, error: text }, { status, headers })
+}
+
 function parseMessages(value: unknown): ChatMessage[] {
   if (!Array.isArray(value)) return []
   const messages: ChatMessage[] = []
@@ -60,21 +69,19 @@ export async function POST(request: Request) {
     'unknown'
 
   if (isRateLimited(clientKey)) {
-    return Response.json(
-      { message: 'You are sending questions a little quickly. Please wait a moment and try again.' },
-      { status: 429, headers: { 'Retry-After': '60' } },
+    return failure(
+      'You are sending questions a little quickly. Please wait a moment and try again.',
+      429,
+      { 'Retry-After': '60' },
     )
   }
 
   // The gateway is also satisfied by Vercel OIDC in production, so only treat a
   // missing key as fatal outside of Vercel.
   if (!process.env.AI_GATEWAY_API_KEY && !process.env.VERCEL) {
-    return Response.json(
-      {
-        message:
-          'The product concierge is not configured on this deployment. Please browse the detail sheets in the meantime.',
-      },
-      { status: 503 },
+    return failure(
+      'The product concierge is not configured on this deployment. Please browse the detail sheets in the meantime.',
+      503,
     )
   }
 
@@ -83,11 +90,11 @@ export async function POST(request: Request) {
     const body: unknown = await request.json()
     messages = parseMessages((body as { messages?: unknown })?.messages)
   } catch {
-    return Response.json({ message: 'That request could not be read.' }, { status: 400 })
+    return failure('That request could not be read.', 400)
   }
 
   if (messages.length === 0) {
-    return Response.json({ message: 'Please include a question.' }, { status: 400 })
+    return failure('Please include a question.', 400)
   }
 
   const catalog = PRODUCTS.map(
@@ -107,9 +114,6 @@ export async function POST(request: Request) {
     return Response.json({ message: result.text })
   } catch (error) {
     console.error('[product-chat] generation failed', error)
-    return Response.json(
-      { message: 'I could not answer that just now. Please review the product detail sheets.' },
-      { status: 502 },
-    )
+    return failure('I could not answer that just now. Please review the product detail sheets.', 502)
   }
 }
