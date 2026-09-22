@@ -24,10 +24,16 @@ export function AddToCartButton({ product }: { product: Product }) {
         clearTimeout(resetTimer.current)
         resetTimer.current = setTimeout(() => setAdded(false), 1800)
       }}
-      className="min-h-12 w-full rounded-xl bg-slate-950 text-white hover:bg-slate-800"
+      className="min-h-12 w-full rounded-xl bg-slate-950 text-white transition-transform hover:bg-slate-800 active:scale-[0.98]"
     >
-      {added ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
-      {added ? 'Added to cart' : isOutOfStock ? 'Out of stock' : 'Add to cart'}
+      {added ? (
+        <Check className="h-4 w-4 scale-110 transition-transform duration-300" />
+      ) : (
+        <ShoppingCart className="h-4 w-4 transition-transform duration-300" />
+      )}
+      <span key={added ? 'added' : 'idle'} className="motion-item-in">
+        {added ? 'Added to cart' : isOutOfStock ? 'Out of stock' : 'Add to cart'}
+      </span>
     </Button>
   )
 }

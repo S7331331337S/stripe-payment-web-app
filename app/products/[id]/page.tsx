@@ -68,13 +68,20 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
 
           <div className="grid gap-10 md:grid-cols-[1fr_0.8fr] md:items-end">
             <div>
-              <p className="mb-3 text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              <p className="reveal-load mb-3 text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 Compound profile
               </p>
-              <h1 className="font-serif text-5xl leading-[0.95] tracking-[-0.04em] text-slate-950 sm:text-7xl">
-                {product.name}
+              <h1 className="reveal-clip font-serif text-5xl leading-[0.95] tracking-[-0.04em] text-slate-950 sm:text-7xl">
+                <span className="reveal-clip-inner" style={{ animationDelay: '80ms' }}>
+                  {product.name}
+                </span>
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">{product.description}</p>
+              <p
+                className="reveal-load mt-6 max-w-xl text-lg leading-8 text-slate-600"
+                style={{ animationDelay: '180ms' }}
+              >
+                {product.description}
+              </p>
               {product.infoLink && (
                 <a
                   href={product.infoLink}

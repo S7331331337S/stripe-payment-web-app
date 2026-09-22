@@ -53,13 +53,13 @@ export function CheckoutModal({ items, isOpen, onClose }: CheckoutModalProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} aria-hidden="true" />
+      <div className="motion-item-in fixed inset-0 z-40 bg-black/50" onClick={onClose} aria-hidden="true" />
       <div className="fixed inset-0 z-50 flex items-end justify-center">
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="checkout-modal-title"
-          className="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-t-[1.5rem] bg-card shadow-2xl"
+          className="motion-sheet-in max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-t-[1.5rem] bg-card shadow-2xl"
         >
           <div className="flex items-center justify-between border-b border-border p-4">
             <h2 id="checkout-modal-title" className="text-lg font-semibold">

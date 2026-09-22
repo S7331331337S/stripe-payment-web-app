@@ -1,13 +1,29 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/components/cart-provider'
 
-export function CartDrawer({ onCheckout }: { onCheckout: () => void }) {
+export function CartDrawer({
+  onCheckout,
+  onReturnToCatalog,
+}: {
+  onCheckout: () => void
+  /** Omit on pages without a catalog section; the drawer then navigates home. */
+  onReturnToCatalog?: () => void
+}) {
   const { cartItems, itemCount, totalInCents, removeItem, updateQuantity } = useCart()
   const [isOpen, setIsOpen] = useState(false)
+
+  const returnToCatalog = () => {
+    setIsOpen(false)
+    if (onReturnToCatalog) {
+      onReturnToCatalog()
+      return
+    }
+    window.location.assign('/#catalog')
+  }
 
   const totalInDollars = (totalInCents / 100).toFixed(2)
 
@@ -32,15 +48,22 @@ export function CartDrawer({ onCheckout }: { onCheckout: () => void }) {
       >
         <ShoppingCart className="h-6 w-6" aria-hidden="true" />
         {itemCount > 0 && (
-          <span className="absolute -right-1 -top-1 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-destructive px-1 text-xs font-bold text-destructive-foreground">
+          <span
+            key={itemCount}
+            className="motion-badge-pop absolute -right-1 -top-1 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-destructive px-1 text-xs font-bold text-destructive-foreground"
+          >
             {itemCount}
           </span>
         )}
       </button>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setIsOpen(false)} aria-hidden="true" />
-      )}
+      <div
+        className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${
+          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={() => setIsOpen(false)}
+        aria-hidden="true"
+      />
 
       <div
         id="cart-drawer"
@@ -69,15 +92,19 @@ export function CartDrawer({ onCheckout }: { onCheckout: () => void }) {
 
           <div className="flex-1 overflow-y-auto p-4">
             {cartItems.length === 0 ? (
-              <div className="flex h-full items-center justify-center">
-                <p className="text-center text-muted-foreground">Your cart is empty</p>
+              <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+                <p className="text-muted-foreground">Your cart is empty</p>
+                <Button variant="outline" onClick={returnToCatalog} className="min-h-11">
+                  <ArrowLeft className="h-4 w-4" />
+                  Return to catalog
+                </Button>
               </div>
             ) : (
               <ul className="space-y-4">
                 {cartItems.map((item) => {
                   const atStockLimit = item.quantity >= item.stock
                   return (
-                    <li key={item.id} className="flex gap-3 rounded-lg border border-border p-3">
+                    <li key={item.id} className="motion-item-in flex gap-3 rounded-lg border border-border p-3">
                       <div className="min-w-0 flex-1">
                         <h3 className="font-medium">{item.name}</h3>
                         <p className="text-sm text-muted-foreground">
@@ -142,16 +169,22 @@ export function CartDrawer({ onCheckout }: { onCheckout: () => void }) {
                 <span className="text-primary">${totalInDollars}</span>
               </div>
             </div>
-            <Button
-              onClick={() => {
-                setIsOpen(false)
-                onCheckout()
-              }}
-              disabled={cartItems.length === 0}
-              className="min-h-12 w-full"
-            >
-              Proceed to checkout
-            </Button>
+            <div className="space-y-2">
+              <Button
+                onClick={() => {
+                  setIsOpen(false)
+                  onCheckout()
+                }}
+                disabled={cartItems.length === 0}
+                className="min-h-12 w-full"
+              >
+                Proceed to checkout
+              </Button>
+              <Button variant="outline" onClick={returnToCatalog} className="min-h-11 w-full">
+                <ArrowLeft className="h-4 w-4" />
+                Return to catalog
+              </Button>
+            </div>
           </div>
         </div>
       </div>
