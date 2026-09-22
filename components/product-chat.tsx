@@ -67,7 +67,7 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
     >
       <div className="flex items-center justify-between px-5 pb-3 pt-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-indigo-700">G&apos;s Stock</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand">G&apos;s Stock</p>
           <h2 className="text-lg font-semibold tracking-tight">Ask the catalog</h2>
         </div>
         <button
@@ -85,13 +85,13 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
             key={`${message.role}-${index}`}
             className={cn(
               'max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-6',
-              message.role === 'user' ? 'ml-auto bg-slate-950 text-white' : 'bg-indigo-50 text-slate-700',
+              message.role === 'user' ? 'ml-auto bg-foreground text-background' : 'bg-brand-soft text-foreground',
             )}
           >
             {message.content}
           </div>
         ))}
-        {loading && <div className="max-w-[88%] rounded-2xl bg-indigo-50 px-3 py-2 text-sm text-slate-500">Reviewing the catalog...</div>}
+        {loading && <div className="max-w-[88%] rounded-2xl bg-brand-soft px-3 py-2 text-sm text-muted-foreground">Reviewing the catalog...</div>}
       </div>
       <form onSubmit={sendMessage} className="flex gap-2 border-t border-slate-200/80 p-3">
         <input
@@ -100,7 +100,7 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="Ask about a product..."
-          className="min-h-11 min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white px-3 text-base outline-none focus:border-indigo-500 disabled:bg-slate-50"
+          className="min-h-11 min-w-0 flex-1 rounded-2xl border border-border bg-card px-3 text-base outline-none focus:border-brand disabled:bg-muted"
         />
         <button
           type="submit"

@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#fafafa',
-    theme_color: '#0f172a',
+    background_color: '#f6f1e6',
+    theme_color: '#241810',
     icons: [
       {
         src: '/icon.svg',

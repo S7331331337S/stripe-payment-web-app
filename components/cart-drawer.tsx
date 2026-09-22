@@ -41,7 +41,7 @@ export function CartDrawer({
     >
       <div className="flex items-center justify-between px-5 pb-3 pt-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-indigo-700">Bag</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand">Bag</p>
           <h2 className="text-lg font-semibold tracking-tight">
             {itemCount === 0 ? 'Your cart' : `${itemCount} item${itemCount === 1 ? '' : 's'}`}
           </h2>

@@ -73,7 +73,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="app-shell min-h-dvh bg-background text-foreground">
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-slate-200/80 bg-background/88 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-border/80 bg-background/88 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
           {isProductPage ? (
             <Link
@@ -105,7 +105,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </span>
             </a>
           )}
-          <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-indigo-700">
+          <span className="rounded-full bg-brand-soft px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-brand">
             Research only
           </span>
         </div>
@@ -143,7 +143,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <nav
         aria-label="Primary"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200/80 bg-background/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border/80 bg-background/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
       >
         <div className="mx-auto grid h-[4.25rem] max-w-lg grid-cols-4">
           <FooterButton label="Home" active={activeTab === 'home'} onClick={goHome} icon={House} />
