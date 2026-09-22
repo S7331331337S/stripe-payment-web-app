@@ -20,12 +20,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     cartItems,
     addToCart: (product) => setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id)
-      return existing ? prev.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item) : [...prev, { ...product, quantity: 1 }]
+      return existing ? prev.map((item) => item.id === product.id ? { ...item, quantity: Math.min(item.quantity + 1, product.stock) } : item) : [...prev, { ...product, quantity: 1 }]
     }),
     removeItem: (productId) => setCartItems((prev) => prev.filter((item) => item.id !== productId)),
     updateQuantity: (productId, quantity) => quantity <= 0
       ? setCartItems((prev) => prev.filter((item) => item.id !== productId))
-      : setCartItems((prev) => prev.map((item) => item.id === productId ? { ...item, quantity } : item)),
+      : setCartItems((prev) => prev.map((item) => item.id === productId ? { ...item, quantity: Math.min(quantity, item.stock) } : item)),
   }), [cartItems])
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

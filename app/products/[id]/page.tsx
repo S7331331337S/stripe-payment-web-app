@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Check, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, Check, ClipboardCheck, PackageCheck, ShieldCheck } from 'lucide-react'
 import { AddToCartButton } from '@/components/add-to-cart-button'
 import { PRODUCTS } from '@/lib/products'
 
@@ -52,6 +52,11 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
               <h2 className="mt-4 font-semibold text-slate-900">Handled with care</h2>
               <p className="mt-2 text-sm leading-6 text-slate-600">This catalog is for research use only. Review all handling, storage, and compliance requirements before ordering.</p>
             </div>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 p-5"><ClipboardCheck className="h-5 w-5 text-indigo-700" /><h2 className="mt-3 font-semibold text-slate-900">Product review</h2><p className="mt-2 text-sm leading-6 text-slate-600">Review the catalog description and applicable documentation before adding this item to an order.</p></div>
+            <div className="rounded-2xl border border-slate-200 p-5"><PackageCheck className="h-5 w-5 text-indigo-700" /><h2 className="mt-3 font-semibold text-slate-900">Order handling</h2><p className="mt-2 text-sm leading-6 text-slate-600">Availability is shown above. Confirm your selected quantity in the cart before checkout.</p></div>
+            <div className="rounded-2xl border border-slate-200 p-5"><ShieldCheck className="h-5 w-5 text-indigo-700" /><h2 className="mt-3 font-semibold text-slate-900">Secure checkout</h2><p className="mt-2 text-sm leading-6 text-slate-600">Payments are processed through Stripe. Order details are reviewed during checkout.</p></div>
           </div>
         </div>
       </div>
