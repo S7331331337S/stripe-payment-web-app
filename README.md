@@ -76,6 +76,13 @@ Copy the printed `whsec_…` value into `STRIPE_WEBHOOK_SECRET`.
 
 ## Before you take real money
 
+> **Check first: is the Stripe account activated for live charges?**
+> If session creation fails with `You cannot currently make live charges`, the
+> account has live keys but has not finished activation. Complete it at
+> <https://dashboard.stripe.com/account/onboarding>, or use test keys until it
+> is done. The server logs call this case out explicitly; customers only ever
+> see a generic "try again" message.
+
 These are deliberate gaps, not oversights — each one needs a product decision:
 
 - **Fulfilment is a log line.** `handleCheckoutCompleted` in

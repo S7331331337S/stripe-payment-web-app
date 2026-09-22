@@ -94,7 +94,32 @@ export async function startCheckoutSession(items: CheckoutLineInput[]): Promise<
 
     return { ok: true, clientSecret: session.client_secret }
   } catch (error) {
-    console.error('[checkout] failed to create session', error)
+    // Log Stripe's structured fields, not just the message. `type`/`code` are
+    // what distinguish a transient failure from a misconfigured account — most
+    // importantly `You cannot currently make live charges`, which means the
+    // Stripe account has live keys but has not finished activation. No Stripe
+    // internals are ever returned to the customer.
+    const stripeError = error as {
+      type?: string
+      code?: string
+      statusCode?: number
+      message?: string
+    }
+    console.error('[checkout] failed to create session', {
+      type: stripeError.type,
+      code: stripeError.code,
+      statusCode: stripeError.statusCode,
+      message: stripeError.message,
+    })
+
+    if (stripeError.message?.includes('cannot currently make live charges')) {
+      console.error(
+        '[checkout] ACTION REQUIRED: this Stripe account is not activated for live charges. ' +
+          'Complete activation at https://dashboard.stripe.com/account/onboarding, ' +
+          'or set test keys (sk_test_… / pk_test_…) until it is.',
+      )
+    }
+
     return {
       ok: false,
       error: 'We could not start checkout right now. Please try again in a moment.',
