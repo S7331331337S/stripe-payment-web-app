@@ -10,21 +10,26 @@ import { PRODUCTS } from '@/lib/products'
 
 export default function StorefrontPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { cartItems, addToCart, removeItem, updateQuantity } = useCart()
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-background/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-background/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-8">
+          <a href="#top" className="flex items-center gap-3" aria-label="G's Stock home">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white"><FlaskConical className="h-4 w-4" /></div>
+            <div><p className="text-sm font-semibold tracking-tight">G&apos;s Stock</p><p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Clinical supply</p></div>
+          </a>
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white"><FlaskConical className="h-4 w-4" /></div>
             <div><p className="text-sm font-semibold tracking-tight">G&apos;s Stock</p><p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Clinical supply</p></div>
           </div>
-          <div className="flex items-center gap-2"><span className="hidden text-xs text-muted-foreground sm:block">Private catalog</span><nav className="flex items-center gap-1"><a href="#catalog" className="hidden min-h-11 items-center px-3 text-xs font-medium text-slate-600 hover:text-slate-950 sm:flex">Catalog</a><a href="#standards" className="hidden min-h-11 items-center px-3 text-xs font-medium text-slate-600 hover:text-slate-950 sm:flex">Standards</a><button aria-label="Open menu" className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/60"><Menu className="h-4 w-4" /></button></nav></div>
+          <div className="flex items-center gap-2"><span className="hidden text-xs text-muted-foreground sm:block">Private catalog</span><nav aria-label="Primary navigation" className="flex items-center gap-1"><a href="#catalog" className="hidden min-h-11 items-center px-3 text-xs font-medium text-slate-600 hover:text-slate-950 sm:flex">Catalog</a><a href="#standards" className="hidden min-h-11 items-center px-3 text-xs font-medium text-slate-600 hover:text-slate-950 sm:flex">Standards</a><button type="button" aria-expanded={isMenuOpen} aria-controls="mobile-navigation" aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} onClick={() => setIsMenuOpen((open) => !open)} className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/60"><Menu className="h-4 w-4" /></button></nav></div>
         </div>
+        {isMenuOpen && <nav id="mobile-navigation" aria-label="Mobile navigation" className="border-t border-slate-200/70 px-5 py-3 sm:hidden"><div className="mx-auto flex max-w-7xl gap-2"><a onClick={() => setIsMenuOpen(false)} href="#catalog" className="flex min-h-11 flex-1 items-center justify-center rounded-full bg-slate-100 text-sm font-medium text-slate-800">Catalog</a><a onClick={() => setIsMenuOpen(false)} href="#standards" className="flex min-h-11 flex-1 items-center justify-center rounded-full bg-slate-100 text-sm font-medium text-slate-800">Standards</a></div></nav>}
       </header>
 
-      <main className="mx-auto max-w-7xl px-5 pb-24 sm:px-8">
+      <main id="top" className="mx-auto max-w-7xl px-5 pb-24 sm:px-8">
         <section className="relative overflow-hidden py-16 sm:py-24">
           <div className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-indigo-200/50 blur-3xl" />
           <div className="pointer-events-none absolute -left-24 bottom-0 h-56 w-56 rounded-full bg-sky-100/70 blur-3xl" />
