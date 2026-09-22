@@ -29,6 +29,13 @@ export async function startCheckoutSession(items: { productId: string; quantity:
     redirect_on_completion: 'never',
     line_items: lineItems,
     mode: 'payment',
+    customer_creation: 'always',
+    shipping_address_collection: {
+      allowed_countries: ['US'],
+    },
+    phone_number_collection: {
+      enabled: true,
+    },
   })
 
   return session.client_secret
