@@ -7,9 +7,11 @@ interface CheckoutModalProps {
   items: { productId: string; quantity: number }[]
   isOpen: boolean
   onClose: () => void
+  onComplete?: () => void
+  onReturnToCatalog?: () => void
 }
 
-export function CheckoutModal({ items, isOpen, onClose }: CheckoutModalProps) {
+export function CheckoutModal({ items, isOpen, onClose, onComplete, onReturnToCatalog }: CheckoutModalProps) {
   if (!isOpen || !items.length) return null
 
   return (
@@ -26,7 +28,7 @@ export function CheckoutModal({ items, isOpen, onClose }: CheckoutModalProps) {
         </button>
       </div>
       <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom)]">
-        <Checkout items={items} />
+        <Checkout items={items} onComplete={onComplete} onClose={onClose} onReturnToCatalog={onReturnToCatalog} />
       </div>
     </div>
   )

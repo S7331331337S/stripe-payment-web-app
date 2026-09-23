@@ -1,7 +1,9 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { Send, X } from 'lucide-react'
+import { linkifyCatalogMentions } from '@/lib/catalog'
 import { cn } from '@/lib/utils'
 
 interface Message {
@@ -9,7 +11,14 @@ interface Message {
   content: string
 }
 
-export function ProductChat({ open, onClose }: { open: boolean; onClose: () => void }) {
+const SUGGESTED_PROMPTS = [
+  'Which compounds support recovery?',
+  'What is in stock for weight research?',
+  'Compare Reta and Tirz',
+  'What is Glow used for?',
+]
+
+export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onClose: () => void; onNavigate?: () => void }) {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
@@ -24,15 +33,15 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, loading, open])
 
-  async function sendMessage(event: React.FormEvent) {
-    event.preventDefault()
-    const question = input.trim()
-    if (!question || loading) return
+  async function sendMessage(question: string) {
+    const trimmed = question.trim()
+    if (!trimmed || loading) return
 
-    const nextMessages = [...messages, { role: 'user' as const, content: question }]
+    const nextMessages = [...messages, { role: 'user' as const, content: trimmed }]
     setMessages(nextMessages)
     setInput('')
     setLoading(true)
+    setMessages((current) => [...current, { role: 'assistant', content: '' }])
 
     try {
       const response = await fetch('/api/product-chat', {
@@ -40,20 +49,40 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: nextMessages }),
       })
-      const data = (await response.json().catch(() => null)) as { message?: string; error?: string } | null
-      const reply = data?.message
-      if (!response.ok || !reply) {
+
+      if (!response.ok || !response.body) {
+        const data = (await response.json().catch(() => null)) as { error?: string } | null
         throw new Error(data?.error ?? 'The product concierge is unavailable.')
       }
 
-      setMessages((current) => [...current, { role: 'assistant', content: reply }])
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let reply = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        reply += decoder.decode(value, { stream: true })
+        const nextReply = reply
+        setMessages((current) => {
+          const copy = [...current]
+          copy[copy.length - 1] = { role: 'assistant', content: nextReply }
+          return copy
+        })
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'I could not connect right now.'
-      setMessages((current) => [...current, { role: 'assistant', content: message }])
+      setMessages((current) => {
+        const copy = [...current]
+        copy[copy.length - 1] = { role: 'assistant', content: message }
+        return copy
+      })
     } finally {
       setLoading(false)
     }
   }
+
+  const showPrompts = messages.length === 1 && !loading
 
   return (
     <section
@@ -89,12 +118,35 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
               message.role === 'user' ? 'ml-auto bg-foreground text-background' : 'bg-brand-soft text-foreground',
             )}
           >
-            {message.content}
+            {message.role === 'assistant' ? (
+              <ChatRichText content={message.content} onNavigate={onNavigate} />
+            ) : (
+              message.content
+            )}
           </div>
         ))}
-        {loading && <div className="max-w-[88%] rounded-2xl bg-brand-soft px-3 py-2 text-sm text-muted-foreground">Reviewing the catalog...</div>}
+        {showPrompts ? (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {SUGGESTED_PROMPTS.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => sendMessage(prompt)}
+                className="rounded-full border border-border bg-white px-3 py-2 text-left text-xs font-medium text-slate-700"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
-      <form onSubmit={sendMessage} className="flex gap-2 border-t border-slate-200/80 p-3">
+      <form
+        onSubmit={(event) => {
+          event.preventDefault()
+          void sendMessage(input)
+        }}
+        className="flex gap-2 border-t border-slate-200/80 p-3"
+      >
         <input
           aria-label="Ask about products"
           disabled={loading}
@@ -113,5 +165,28 @@ export function ProductChat({ open, onClose }: { open: boolean; onClose: () => v
         </button>
       </form>
     </section>
+  )
+}
+
+function ChatRichText({ content, onNavigate }: { content: string; onNavigate?: () => void }) {
+  if (!content) return <span className="text-muted-foreground">Reviewing the catalog...</span>
+
+  return (
+    <span className="whitespace-pre-wrap">
+      {linkifyCatalogMentions(content).map((part, index) =>
+        part.type === 'link' && part.href ? (
+          <Link
+            key={`${part.href}-${index}`}
+            href={part.href}
+            onClick={onNavigate}
+            className="font-medium text-brand underline underline-offset-2"
+          >
+            {part.text}
+          </Link>
+        ) : (
+          <span key={`${part.text}-${index}`}>{part.text}</span>
+        ),
+      )}
+    </span>
   )
 }
