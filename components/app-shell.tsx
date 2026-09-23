@@ -17,8 +17,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const { panel, isCheckoutOpen, openCart, openChat, closePanel, openCheckout, closeCheckout } = useAppUI()
-  const { cartItems, removeItem, updateQuantity } = useCart()
+  const { cartItems, removeItem, updateQuantity, clearCart } = useCart()
   const [hash, setHash] = useState('')
+  const [checkoutItems, setCheckoutItems] = useState<{ productId: string; quantity: number }[]>([])
 
   useEffect(() => {
     const syncHash = () => setHash(window.location.hash)
@@ -131,15 +132,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onRemoveItem={removeItem}
         onUpdateQuantity={updateQuantity}
         onCheckout={() => {
-          if (cartItems.length > 0) openCheckout()
+          if (cartItems.length === 0) return
+          setCheckoutItems(cartItems.map(({ id, quantity }) => ({ productId: id, quantity })))
+          openCheckout()
         }}
         onReturnToCatalog={goCatalog}
       />
-      <ProductChat open={panel === 'chat'} onClose={closePanel} />
+      <ProductChat
+        open={panel === 'chat'}
+        onClose={closePanel}
+        onNavigate={() => {
+          closePanel()
+        }}
+      />
       <CheckoutModal
-        items={cartItems.map(({ id, quantity }) => ({ productId: id, quantity }))}
+        items={checkoutItems}
         isOpen={isCheckoutOpen}
         onClose={closeCheckout}
+        onComplete={clearCart}
+        onReturnToCatalog={() => {
+          closeCheckout()
+          goCatalog()
+        }}
       />
 
       <nav

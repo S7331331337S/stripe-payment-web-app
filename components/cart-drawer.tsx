@@ -2,12 +2,9 @@
 
 import { ArrowLeft, Minus, Plus, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { formatPrice, isLowStock } from '@/lib/catalog'
 import { cn } from '@/lib/utils'
-import type { Product } from '@/lib/products'
-
-interface CartItem extends Product {
-  quantity: number
-}
+import type { CartItem } from '@/components/cart-provider'
 
 interface CartDrawerProps {
   open: boolean
@@ -29,8 +26,8 @@ export function CartDrawer({
   onReturnToCatalog,
 }: CartDrawerProps) {
   const total = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
-  const totalInDollars = (total / 100).toFixed(2)
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
+  const hasStockIssue = items.some((item) => item.quantity > item.stock || item.stock === 0)
 
   function returnToCatalog() {
     onClose()
@@ -84,43 +81,52 @@ export function CartDrawer({
           </div>
         ) : (
           <div className="space-y-3">
-            {items.map((item) => (
-              <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate font-medium text-slate-950">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground">${(item.priceInCents / 100).toFixed(2)} each</p>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center rounded-full bg-slate-100">
+            {items.map((item) => {
+              const atMax = item.quantity >= item.stock
+              return (
+                <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-medium text-slate-950">{item.name}</h3>
+                    <p className="text-sm text-muted-foreground">${formatPrice(item.priceInCents)} each</p>
+                    {isLowStock(item.stock) || atMax ? (
+                      <p className="mt-1 text-xs font-medium text-amber-700">
+                        {item.stock === 0 ? 'No longer available' : `Only ${item.stock} left`}
+                      </p>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center rounded-full bg-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                        className="flex h-10 w-10 items-center justify-center"
+                        aria-label={`Decrease ${item.name}`}
+                      >
+                        <Minus className="h-3.5 w-3.5" />
+                      </button>
+                      <span className="w-6 text-center text-sm font-semibold">{item.quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                        disabled={atMax}
+                        className="flex h-10 w-10 items-center justify-center disabled:opacity-40"
+                        aria-label={`Increase ${item.name}`}
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                     <button
                       type="button"
-                      onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                      className="flex h-10 w-10 items-center justify-center"
-                      aria-label={`Decrease ${item.name}`}
+                      onClick={() => onRemoveItem(item.id)}
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-destructive hover:bg-destructive/10"
+                      aria-label={`Remove ${item.name}`}
                     >
-                      <Minus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="w-6 text-center text-sm font-semibold">{item.quantity}</span>
-                    <button
-                      type="button"
-                      onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                      className="flex h-10 w-10 items-center justify-center"
-                      aria-label={`Increase ${item.name}`}
-                    >
-                      <Plus className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => onRemoveItem(item.id)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full text-destructive hover:bg-destructive/10"
-                    aria-label={`Remove ${item.name}`}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
@@ -128,10 +134,17 @@ export function CartDrawer({
       <div className="border-t border-slate-200/80 px-4 py-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Total</span>
-          <span className="text-lg font-semibold text-slate-950">${totalInDollars}</span>
+          <span className="text-lg font-semibold text-slate-950">${formatPrice(total)}</span>
         </div>
+        {hasStockIssue ? (
+          <p className="mb-2 text-xs text-amber-700">Adjust quantities to match current availability before checkout.</p>
+        ) : null}
         <div className="space-y-2">
-          <Button onClick={onCheckout} disabled={items.length === 0} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
+          <Button
+            onClick={onCheckout}
+            disabled={items.length === 0 || hasStockIssue}
+            className="h-12 w-full rounded-2xl bg-slate-950 text-white"
+          >
             Checkout securely
           </Button>
           <Button variant="outline" onClick={returnToCatalog} className="h-12 w-full rounded-2xl">
