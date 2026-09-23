@@ -1,4 +1,4 @@
-# G's Stock — Stripe storefront
+# Mstrmnd — Stripe storefront
 
 A Next.js 16 storefront for a small research-compound catalog, with Stripe
 embedded checkout, a persistent cart, and an optional AI product concierge.

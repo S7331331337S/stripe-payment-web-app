@@ -23,7 +23,7 @@ export function getStripe(): Stripe {
   }
 
   client = new Stripe(secretKey, {
-    appInfo: { name: "G's Stock", url: 'https://github.com/S7331331337S/stripe-payment-web-app' },
+    appInfo: { name: 'Mstrmnd', url: 'https://github.com/S7331331337S/stripe-payment-web-app' },
   })
   return client
 }

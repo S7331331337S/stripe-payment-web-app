@@ -29,6 +29,6 @@ function stripTrailingSlash(value: string): string {
   return value.replace(/\/+$/, '')
 }
 
-export const SITE_NAME = "G's Stock"
+export const SITE_NAME = 'Mstrmnd'
 export const SITE_DESCRIPTION =
   'A considered catalog of research compounds with clear detail sheets and secure Stripe checkout.'

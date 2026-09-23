@@ -44,6 +44,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [isCheckoutOpen, closeCheckout, closePanel])
 
+  useEffect(() => {
+    const locked = panel !== 'none' || isCheckoutOpen
+    document.body.style.overflow = locked ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [panel, isCheckoutOpen])
+
   const isProductPage = pathname.startsWith('/products/')
   const isNestedPage = pathname !== '/'
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
@@ -96,13 +104,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 goHome()
               }}
               className="flex min-h-11 items-center gap-2.5"
-              aria-label="G's Stock home"
+              aria-label="Mstrmnd home"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background">
                 <FlaskConical className="h-3.5 w-3.5" />
               </span>
               <span>
-                <span className="block font-heading text-sm font-semibold leading-none tracking-tight">G&apos;s Stock</span>
+                <span className="block font-heading text-sm font-semibold leading-none tracking-[0.08em]">MSTRMND</span>
                 <span className="mt-1 block text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   Clinical supply
                 </span>

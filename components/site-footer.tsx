@@ -22,7 +22,7 @@ export function SiteFooter() {
         ))}
       </nav>
       <p className="pb-1 text-[11px] leading-5 text-muted-foreground">
-        Research use only. G&apos;s Stock does not provide medical advice. Checkout is handled by Stripe.
+        Research use only. Mstrmnd does not provide medical advice. Checkout is handled by Stripe.
       </p>
     </footer>
   )

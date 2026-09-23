@@ -1,5 +1,6 @@
-import { generateText } from 'ai'
+import { streamText } from 'ai'
 import { PRODUCTS } from '@/lib/products'
+import { SITE_NAME } from '@/lib/site'
 
 export const runtime = 'nodejs'
 
@@ -39,12 +40,12 @@ function isRateLimited(key: string): boolean {
 }
 
 /**
- * Failure responses carry the text under both `message` and `error`: the chat
- * client reads `error` first and falls back to `message`. Emitting both keeps
- * the panel showing the real reason instead of a generic fallback.
+ * The success path streams, so failures must be JSON the client can read
+ * before it starts reading the body. The text is carried under both `error`
+ * and `message` because the panel reads `error` first.
  */
 function failure(text: string, status: number, headers?: HeadersInit) {
-  return Response.json({ message: text, error: text }, { status, headers })
+  return Response.json({ error: text, message: text }, { status, headers })
 }
 
 function parseMessages(value: unknown): ChatMessage[] {
@@ -94,26 +95,26 @@ export async function POST(request: Request) {
   }
 
   if (messages.length === 0) {
-    return failure('Please include a question.', 400)
+    return failure('Send a question about the catalog.', 400)
   }
 
   const catalog = PRODUCTS.map(
     (product) =>
-      `${product.name}: ${product.description}; benefits: ${product.benefits}; price: $${(
+      `${product.name} (id: ${product.id}, path: /products/${product.id}): ${product.description}; benefits: ${product.benefits}; price: $${(
         product.priceInCents / 100
-      ).toFixed(2)}; stock: ${product.stock}; detail page: /products/${product.id}`,
+      ).toFixed(2)}; stock: ${product.stock}`,
   ).join('\n')
 
   try {
-    const result = await generateText({
+    const result = streamText({
       model: 'openai/gpt-5-mini',
-      system: `You are the G's Stock product concierge. Answer only questions about this catalog and the ordering process. Be concise, calm, clinical, and trustworthy. Never make medical claims, diagnose, recommend a dose or a protocol, suggest human use, or invent details that are not in the catalog below. State that all products are for research use only, and point customers to the relevant internal detail page when useful. If a question falls outside the catalog and ordering, say so briefly. Catalog:\n${catalog}`,
+      system: `You are the ${SITE_NAME} product concierge. Answer only questions about this catalog and ordering process. Be concise, calm, clinical, and trustworthy. Never make medical claims, diagnose, recommend a dose or a protocol, suggest human use, or invent details that are not in the catalog below. Explain that all products are for research use only. When you mention a catalog item, include a markdown link to its detail page using the product path, for example [BPC157 10mg](/products/bpc157). Catalog:\n${catalog}`,
       messages,
     })
 
-    return Response.json({ message: result.text })
+    return result.toTextStreamResponse()
   } catch (error) {
     console.error('[product-chat] generation failed', error)
-    return failure('I could not answer that just now. Please review the product detail sheets.', 502)
+    return failure('The product concierge is temporarily unavailable. Please try again shortly.', 503)
   }
 }

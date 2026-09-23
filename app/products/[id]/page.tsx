@@ -101,7 +101,8 @@ export async function generateMetadata({
   const product = PRODUCTS.find((item) => item.id === id)
   if (!product) return { title: 'Product not found' }
 
-  // `title` is completed by the template in app/layout.tsx.
+  // The brand suffix comes from the title template in app/layout.tsx, so the
+  // name is not repeated here.
   return {
     title: product.name,
     description: product.description,

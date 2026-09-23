@@ -29,6 +29,12 @@ export function CatalogToolbar({
         <input
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
+          type="search"
+          inputMode="search"
+          enterKeyHint="search"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="Search compounds, notes, or benefits"
           className="h-12 w-full rounded-2xl border border-border bg-card pl-10 pr-11 text-base text-foreground outline-none focus:border-brand"
         />
@@ -79,7 +85,7 @@ function CategoryChip({
       type="button"
       onClick={onClick}
       className={cn(
-        'h-9 shrink-0 rounded-full px-3 text-sm font-medium transition-colors',
+        'h-11 shrink-0 rounded-full px-4 text-sm font-medium transition-colors',
         active ? 'bg-foreground text-background' : 'bg-brand-soft text-brand hover:bg-brand-muted/40',
       )}
     >

@@ -47,7 +47,7 @@ export function CheckoutModal({ items, isOpen, onClose, onComplete, onReturnToCa
           <X className="h-5 w-5" />
         </button>
       </div>
-      <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom)]">
+      <div className="mx-auto w-full max-w-lg flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
         <Checkout items={items} onComplete={onComplete} onClose={onClose} onReturnToCatalog={onReturnToCatalog} />
       </div>
     </div>
