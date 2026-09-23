@@ -31,7 +31,7 @@ export default function StorefrontPage() {
 
   return (
     <>
-      <section className="relative mb-[var(--app-footer)] flex min-h-[calc(100dvh-var(--app-chrome))] flex-col justify-between overflow-hidden py-3">
+      <section className="relative flex flex-col gap-8 overflow-hidden pb-10 pt-6">
         <div className="motion-float-slow pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-indigo-200/50 blur-3xl dark:bg-indigo-500/20" />
         <div className="motion-float-slower pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl dark:bg-sky-400/15" />
 
@@ -93,7 +93,7 @@ export default function StorefrontPage() {
             <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-foreground">Browse the catalog</h2>
           </div>
         </Reveal>
-        <Reveal>
+        <div className="sticky top-[var(--app-header)] z-30 -mx-4 bg-background/92 px-4 py-2 backdrop-blur-xl">
           <CatalogToolbar
             query={query}
             category={category}
@@ -102,7 +102,7 @@ export default function StorefrontPage() {
             onQueryChange={setQuery}
             onCategoryChange={setCategory}
           />
-        </Reveal>
+        </div>
         <div className="mt-4 grid gap-3">
           {visibleProducts.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-border px-5 py-10 text-center">
