@@ -58,8 +58,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
-      <ThemeScript />
       <body className="font-sans antialiased">
+        <ThemeScript />
         <ThemeProvider>
           <CartProvider>
             <AppUIProvider>
