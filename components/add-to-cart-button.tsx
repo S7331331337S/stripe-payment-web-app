@@ -25,24 +25,24 @@ export function AddToCartButton({ product }: { product: Product }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between rounded-2xl bg-white/80 px-2 py-1">
-        <p className="pl-2 text-sm text-slate-600">Quantity</p>
+      <div className="flex items-center justify-between rounded-2xl bg-background/80 px-2 py-1">
+        <p className="pl-2 text-sm text-muted-foreground">Quantity</p>
         <div className="flex items-center">
           <button
             type="button"
             disabled={quantity <= 1}
             onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-700 disabled:opacity-40"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-foreground disabled:opacity-40"
             aria-label="Decrease quantity"
           >
             <Minus className="h-4 w-4" />
           </button>
-          <span className="w-8 text-center font-mono text-base font-semibold text-slate-950">{quantity || 0}</span>
+          <span className="w-8 text-center font-mono text-base font-semibold text-foreground">{quantity || 0}</span>
           <button
             type="button"
             disabled={quantity >= maxQuantity}
             onClick={() => setQuantity((current) => Math.min(maxQuantity, current + 1))}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-700 disabled:opacity-40"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-foreground disabled:opacity-40"
             aria-label="Increase quantity"
           >
             <Plus className="h-4 w-4" />
@@ -50,7 +50,7 @@ export function AddToCartButton({ product }: { product: Product }) {
         </div>
       </div>
       {alreadyInCart > 0 ? (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted-foreground">
           {alreadyInCart} already in cart
           {maxQuantity > 0 ? ` · ${maxQuantity} more available` : ' · stock limit reached'}
         </p>
@@ -64,7 +64,7 @@ export function AddToCartButton({ product }: { product: Product }) {
           setQuantity(Math.min(1, Math.max(0, maxQuantity - quantity)))
           setTimeout(() => setAdded(false), 1800)
         }}
-        className="h-12 w-full rounded-2xl bg-slate-950 text-white transition-transform hover:bg-slate-800 active:scale-[0.98]"
+        className="h-12 w-full rounded-2xl bg-foreground text-background transition-transform hover:bg-foreground/90 active:scale-[0.98]"
       >
         <ShoppingCart className={`h-4 w-4 transition-transform duration-300 ${added ? 'scale-110' : ''}`} />
         <span key={added ? 'added' : 'idle'} className="motion-item-in">

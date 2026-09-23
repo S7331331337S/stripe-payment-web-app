@@ -46,7 +46,7 @@ export function CartDrawer({
       aria-hidden={!open}
       inert={!open}
       className={cn(
-        'fixed inset-x-0 z-[46] mx-auto flex w-full max-w-lg flex-col rounded-t-3xl border border-slate-200/80 bg-background shadow-[0_-18px_50px_-20px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out',
+        'fixed inset-x-0 z-[46] mx-auto flex w-full max-w-lg flex-col rounded-t-3xl border border-border/80 bg-background shadow-[0_-18px_50px_-20px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out',
         'bottom-[calc(4.25rem+env(safe-area-inset-bottom))] max-h-[min(38rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom)))]',
         open ? 'translate-y-0' : 'pointer-events-none translate-y-[120%]',
       )}
@@ -61,7 +61,7 @@ export function CartDrawer({
         <button
           type="button"
           onClick={onClose}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
           aria-label="Close cart"
         >
           <X className="h-5 w-5" />
@@ -72,7 +72,7 @@ export function CartDrawer({
         {items.length === 0 ? (
           <div className="flex h-40 flex-col items-center justify-center gap-3 text-center">
             <div>
-              <p className="text-sm font-medium text-slate-900">Your cart is empty</p>
+              <p className="text-sm font-medium text-foreground">Your cart is empty</p>
               <p className="mt-1 text-sm text-muted-foreground">Browse the catalog and add a compound.</p>
             </div>
             <Button variant="outline" onClick={returnToCatalog} className="min-h-11 rounded-2xl">
@@ -85,19 +85,19 @@ export function CartDrawer({
             {items.map((item) => {
               const atMax = item.quantity >= item.stock
               return (
-                <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
+                <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-border/80 bg-card/80 p-3">
                   <ProductMark product={item} size="sm" />
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-mono font-medium text-slate-950">{item.name}</h3>
+                    <h3 className="truncate font-mono font-medium text-foreground">{item.name}</h3>
                     <p className="font-mono text-sm text-muted-foreground">${formatPrice(item.priceInCents)} each</p>
                     {isLowStock(item.stock) || atMax ? (
-                      <p className="mt-1 text-xs font-medium text-amber-700">
+                      <p className="mt-1 text-xs font-medium text-amber-700 dark:text-amber-400">
                         {item.stock === 0 ? 'No longer available' : `Only ${item.stock} left`}
                       </p>
                     ) : null}
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center rounded-full bg-slate-100">
+                    <div className="flex items-center rounded-full bg-muted">
                       <button
                         type="button"
                         onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
@@ -133,19 +133,19 @@ export function CartDrawer({
         )}
       </div>
 
-      <div className="border-t border-slate-200/80 px-4 py-4">
+      <div className="border-t border-border/80 px-4 py-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Total</span>
-          <span className="font-mono text-lg font-semibold text-slate-950">${formatPrice(total)}</span>
+          <span className="font-mono text-lg font-semibold text-foreground">${formatPrice(total)}</span>
         </div>
         {hasStockIssue ? (
-          <p className="mb-2 text-xs text-amber-700">Adjust quantities to match current availability before checkout.</p>
+          <p className="mb-2 text-xs text-amber-700 dark:text-amber-400">Adjust quantities to match current availability before checkout.</p>
         ) : null}
         <div className="space-y-2">
           <Button
             onClick={onCheckout}
             disabled={items.length === 0 || hasStockIssue}
-            className="h-12 w-full rounded-2xl bg-slate-950 text-white"
+            className="h-12 w-full rounded-2xl bg-foreground text-background"
           >
             Checkout securely
           </Button>

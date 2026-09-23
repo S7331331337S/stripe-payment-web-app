@@ -10,8 +10,8 @@ export function RelatedProducts({ products }: { products: Product[] }) {
 
   return (
     <section className="mt-8">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Related compounds</p>
-      <h2 className="mt-1 text-xl font-semibold tracking-tight text-slate-950">Often reviewed together</h2>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Related compounds</p>
+      <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground">Often reviewed together</h2>
       <div className="mt-4 grid gap-3">
         {products.map((product) => (
           <Link
@@ -22,12 +22,12 @@ export function RelatedProducts({ products }: { products: Product[] }) {
             <div className="flex min-w-0 items-center gap-3">
               <ProductMark product={product} size="sm" />
               <div className="min-w-0">
-                <p className="truncate font-mono font-medium text-slate-950">{product.name}</p>
-                <p className="mt-0.5 line-clamp-1 text-sm text-slate-600">{product.description}</p>
+                <p className="truncate font-mono font-medium text-foreground">{product.name}</p>
+                <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">{product.description}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-mono text-sm font-semibold text-slate-950">${formatPrice(product.priceInCents)}</p>
+              <p className="font-mono text-sm font-semibold text-foreground">${formatPrice(product.priceInCents)}</p>
               <p className="text-xs text-muted-foreground">{stockLabel(product.stock)}</p>
             </div>
           </Link>

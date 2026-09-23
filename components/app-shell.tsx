@@ -8,6 +8,7 @@ import { CartDrawer } from '@/components/cart-drawer'
 import { CheckoutModal } from '@/components/checkout-modal'
 import { ProductChat } from '@/components/product-chat'
 import { SiteFooter } from '@/components/site-footer'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { useAppUI } from '@/components/app-ui'
 import { useCart } from '@/components/cart-provider'
 import { cn } from '@/lib/utils'
@@ -81,7 +82,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {isNestedPage ? (
             <Link
               href={isProductPage ? '/' : '/'}
-              className="inline-flex min-h-11 min-w-11 items-center gap-1 text-sm font-medium text-slate-700"
+              className="inline-flex min-h-11 min-w-11 items-center gap-1 text-sm font-medium text-muted-foreground"
               aria-label={isProductPage ? 'Back to catalog' : 'Back to home'}
             >
               <ChevronLeft className="h-5 w-5" />
@@ -97,7 +98,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="flex min-h-11 items-center gap-2.5"
               aria-label="G's Stock home"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-950 text-white">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background">
                 <FlaskConical className="h-3.5 w-3.5" />
               </span>
               <span>
@@ -108,9 +109,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </span>
             </a>
           )}
-          <span className="rounded-full bg-brand-soft px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-brand">
-            Research only
-          </span>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <span className="rounded-full bg-brand-soft px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-brand">
+              Research only
+            </span>
+          </div>
         </div>
       </header>
 
@@ -123,7 +127,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <button
           type="button"
           aria-label="Close panel"
-          className="fixed inset-0 z-[45] bg-slate-950/35 backdrop-blur-[2px]"
+          className="fixed inset-0 z-[45] bg-black/40 backdrop-blur-[2px]"
           onClick={closePanel}
         />
       )}
@@ -206,13 +210,13 @@ function FooterButton({
       aria-current={active ? 'page' : undefined}
       className={cn(
         'relative flex min-h-11 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors',
-        active ? 'text-slate-950' : 'text-slate-500',
+        active ? 'text-foreground' : 'text-muted-foreground',
       )}
     >
       <span className="relative">
         <Icon className={cn('h-5 w-5', active && 'stroke-[2.25]')} />
         {badge ? (
-          <span className="absolute -right-2.5 -top-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-slate-950 px-1 text-[10px] font-semibold text-white">
+          <span className="absolute -right-2.5 -top-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-semibold text-background">
             {badge}
           </span>
         ) : null}

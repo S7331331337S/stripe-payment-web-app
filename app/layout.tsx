@@ -5,6 +5,9 @@ import './globals.css'
 import { AppShell } from '@/components/app-shell'
 import { AppUIProvider } from '@/components/app-ui'
 import { CartProvider } from '@/components/cart-provider'
+import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeScript } from '@/components/theme-script'
+import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '@/lib/theme'
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -43,8 +46,8 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
-    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR_LIGHT },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR_DARK },
   ],
 }
 
@@ -54,13 +57,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`light ${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <ThemeScript />
       <body className="font-sans antialiased">
-        <CartProvider>
-          <AppUIProvider>
-            <AppShell>{children}</AppShell>
-          </AppUIProvider>
-        </CartProvider>
+        <ThemeProvider>
+          <CartProvider>
+            <AppUIProvider>
+              <AppShell>{children}</AppShell>
+            </AppUIProvider>
+          </CartProvider>
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
