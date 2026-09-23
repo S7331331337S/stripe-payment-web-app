@@ -10,8 +10,8 @@ export default function OpenGraphImage() {
       <div
         style={{
           alignItems: 'flex-start',
-          background: 'linear-gradient(135deg, #071b1d 0%, #123c3c 55%, #208070 100%)',
-          color: 'white',
+          background: '#fafafa',
+          color: '#252527',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
@@ -20,19 +20,21 @@ export default function OpenGraphImage() {
           width: '100%',
         }}
       >
-        <div style={{ display: 'flex', fontSize: 36, fontWeight: 600, letterSpacing: '-1px' }}>
-          G&apos;s Stock
+        <div style={{ alignItems: 'center', display: 'flex', gap: 16 }}>
+          <div style={{ background: '#475fa5', borderRadius: 18, display: 'flex', height: 48, width: 48 }} />
+          <div style={{ display: 'flex', fontSize: 36, fontWeight: 600, letterSpacing: '-1px' }}>G&apos;s Stock</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 920 }}>
-          <div style={{ display: 'flex', fontSize: 82, fontWeight: 700, letterSpacing: '-4px', lineHeight: 1.05 }}>
-            Clinical Research Supply
+          <div style={{ background: '#b7c3e4', display: 'flex', height: 4, marginBottom: 28, width: 76 }} />
+          <div style={{ display: 'flex', fontSize: 82, fontWeight: 700, letterSpacing: '-4px', lineHeight: 1.02 }}>
+            A clearer standard for modern research.
           </div>
-          <div style={{ display: 'flex', fontSize: 30, lineHeight: 1.35, marginTop: 28, opacity: 0.85 }}>
-            Considered compounds. Clear detail sheets. Secure checkout.
+          <div style={{ color: '#6a696d', display: 'flex', fontSize: 30, lineHeight: 1.35, marginTop: 28 }}>
+            Considered compounds, presented with clarity and handled with care.
           </div>
         </div>
-        <div style={{ display: 'flex', fontSize: 22, letterSpacing: '2px', opacity: 0.7, textTransform: 'uppercase' }}>
-          Research catalog
+        <div style={{ color: '#475fa5', display: 'flex', fontSize: 22, fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase' }}>
+          Curated research supply
         </div>
       </div>
     ),
