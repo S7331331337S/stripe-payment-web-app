@@ -35,7 +35,7 @@ const PRODUCT_MARKS = [
 ] as const
 
 export function productInitials(name: string) {
-  const base = name.replace(/\s+\d+\s*mg$/i, '').replace(/[^A-Za-z0-9+/ -]/g, '').trim()
+  const base = name.replace(/\s+\d+\s*mg$/i, '').replace(/[^A-Za-z0-9+/ ]/g, '').trim()
   const tokens = base.split(/[\s/]+/).filter(Boolean)
   const first = tokens[0] ?? 'GS'
   if (tokens.length >= 2 && tokens[1]) return `${first[0] ?? ''}${tokens[1][0] ?? ''}`.toUpperCase()
