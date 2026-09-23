@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { ArrowDown, FlaskConical, LockKeyhole, Package, Sparkles } from 'lucide-react'
 import { CatalogToolbar } from '@/components/catalog-toolbar'
 import { ProductCard } from '@/components/product-card'
@@ -136,7 +137,19 @@ export default function StorefrontPage() {
           </h2>
           <p className="mt-3 text-sm leading-6 text-background/70">
             Products in this catalog are intended for research use only. Please review each detail sheet and all applicable
-            handling and compliance requirements before ordering.
+            handling and compliance requirements before ordering. Review{' '}
+            <Link href="/terms" className="underline decoration-brand-muted underline-offset-2">
+              terms
+            </Link>
+            ,{' '}
+            <Link href="/shipping" className="underline decoration-brand-muted underline-offset-2">
+              shipping
+            </Link>
+            , and{' '}
+            <Link href="/privacy" className="underline decoration-brand-muted underline-offset-2">
+              privacy
+            </Link>{' '}
+            before you check out.
           </p>
         </section>
       </Reveal>

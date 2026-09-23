@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Check, ShieldCheck } from 'lucide-react'
 import { AddToCartButton } from '@/components/add-to-cart-button'
+import { ProductMark } from '@/components/product-mark'
 import { RelatedProducts } from '@/components/related-products'
 import { formatPrice, getRelatedProducts, isLowStock, splitBenefits, stockLabel } from '@/lib/catalog'
 import { PRODUCTS } from '@/lib/products'
@@ -22,11 +23,14 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
   return (
     <article className="pt-5">
       <p className="reveal-load text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">Detail sheet</p>
-      <h1 className="reveal-clip mt-2 text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950">
-        <span className="reveal-clip-inner" style={{ animationDelay: '80ms' }}>
-          {product.name}
-        </span>
-      </h1>
+      <div className="mt-3 flex items-start gap-3">
+        <ProductMark product={product} size="lg" />
+        <h1 className="reveal-clip text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950">
+          <span className="reveal-clip-inner" style={{ animationDelay: '80ms' }}>
+            {product.name}
+          </span>
+        </h1>
+      </div>
       <p className="reveal-load mt-3 text-sm leading-6 text-slate-600" style={{ animationDelay: '180ms' }}>
         {product.description}
       </p>

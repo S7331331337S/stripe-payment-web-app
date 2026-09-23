@@ -2,6 +2,7 @@
 
 import { ArrowLeft, Minus, Plus, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ProductMark } from '@/components/product-mark'
 import { formatPrice, isLowStock } from '@/lib/catalog'
 import { cn } from '@/lib/utils'
 import type { CartItem } from '@/components/cart-provider'
@@ -85,6 +86,7 @@ export function CartDrawer({
               const atMax = item.quantity >= item.stock
               return (
                 <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
+                  <ProductMark product={item} size="sm" />
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-medium text-slate-950">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">${formatPrice(item.priceInCents)} each</p>
