@@ -32,9 +32,8 @@ export default function StorefrontPage() {
   return (
     <>
       <section className="relative mb-[var(--app-footer)] flex min-h-[calc(100dvh-var(--app-chrome))] flex-col justify-between overflow-hidden py-3">
-        <div className="hero-teal-wash pointer-events-none absolute inset-x-0 top-0 h-[32rem]" />
-        <div className="motion-float-slow pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-teal-200/40 blur-3xl dark:bg-teal-500/15" />
-        <div className="motion-float-slower pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-cyan-100/60 blur-3xl dark:bg-cyan-400/10" />
+        <div className="motion-float-slow pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-indigo-200/50 blur-3xl dark:bg-indigo-500/20" />
+        <div className="motion-float-slower pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl dark:bg-sky-400/15" />
 
         <p
           className="reveal-load relative inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand"
