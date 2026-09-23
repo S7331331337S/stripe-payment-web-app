@@ -25,18 +25,18 @@ export function CatalogToolbar({
     <div className="space-y-3">
       <label className="relative block">
         <span className="sr-only">Search the catalog</span>
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           placeholder="Search compounds, notes, or benefits"
-          className="h-12 w-full rounded-2xl border border-border bg-card pl-10 pr-11 text-base outline-none focus:border-brand"
+          className="h-12 w-full rounded-2xl border border-border bg-card pl-10 pr-11 text-base text-foreground outline-none focus:border-brand"
         />
         {query ? (
           <button
             type="button"
             onClick={() => onQueryChange('')}
-            className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100"
+            className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
             aria-label="Clear search"
           >
             <X className="h-4 w-4" />
@@ -56,7 +56,7 @@ export function CatalogToolbar({
         ))}
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="font-mono text-xs text-muted-foreground">
         {resultCount === totalCount
           ? `${totalCount} compounds`
           : `${resultCount} of ${totalCount} compounds`}
@@ -80,7 +80,7 @@ function CategoryChip({
       onClick={onClick}
       className={cn(
         'h-9 shrink-0 rounded-full px-3 text-sm font-medium transition-colors',
-        active ? 'bg-slate-950 text-white' : 'bg-brand-soft text-brand hover:bg-brand-muted/40',
+        active ? 'bg-foreground text-background' : 'bg-brand-soft text-brand hover:bg-brand-muted/40',
       )}
     >
       {label}

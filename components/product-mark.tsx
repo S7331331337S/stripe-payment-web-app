@@ -13,7 +13,7 @@ export function ProductMark({
     <span
       aria-hidden
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br font-semibold tracking-tight',
+        'inline-flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br font-mono font-semibold tracking-tight',
         productMarkClass(product.id),
         size === 'sm' && 'h-10 w-10 text-[11px]',
         size === 'md' && 'h-12 w-12 text-xs',

@@ -1,23 +1,23 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Instrument_Serif, Inter } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { AppShell } from '@/components/app-shell'
 import { AppUIProvider } from '@/components/app-ui'
 import { CartProvider } from '@/components/cart-provider'
+import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeScript } from '@/components/theme-script'
+import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '@/lib/theme'
 import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl } from '@/lib/site'
 
-const sans = Inter({
+const geistSans = Geist({
   subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-geist-sans',
 })
 
-const serif = Instrument_Serif({
+const geistMono = Geist_Mono({
   subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-  variable: '--font-instrument-serif',
+  variable: '--font-geist-mono',
 })
 
 export const metadata: Metadata = {
@@ -65,13 +65,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  // Lets the shell paint under the notch and home indicator.
   viewportFit: 'cover',
-  // The shell is hard-coded `<html className="light">`, so advertising a dark
-  // scheme would have the browser style form controls for a theme the page
-  // never applies. Revisit together if a theme toggle lands.
-  colorScheme: 'light',
-  themeColor: '#fafafa',
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR_LIGHT },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR_DARK },
+  ],
 }
 
 export default function RootLayout({
@@ -80,13 +79,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`light ${sans.variable} ${serif.variable}`}>
-      <body className="antialiased">
-        <CartProvider>
-          <AppUIProvider>
-            <AppShell>{children}</AppShell>
-          </AppUIProvider>
-        </CartProvider>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased">
+        <ThemeScript />
+        <ThemeProvider>
+          <CartProvider>
+            <AppUIProvider>
+              <AppShell>{children}</AppShell>
+            </AppUIProvider>
+          </CartProvider>
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

@@ -32,8 +32,8 @@ export default function StorefrontPage() {
   return (
     <>
       <section className="relative mb-[var(--app-footer)] flex min-h-[calc(100dvh-var(--app-chrome))] flex-col justify-between overflow-hidden py-3">
-        <div className="motion-float-slow pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-indigo-200/50 blur-3xl" />
-        <div className="motion-float-slower pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl" />
+        <div className="motion-float-slow pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-indigo-200/50 blur-3xl dark:bg-indigo-500/20" />
+        <div className="motion-float-slower pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl dark:bg-sky-400/15" />
 
         <p
           className="reveal-load relative inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand"
@@ -106,7 +106,7 @@ export default function StorefrontPage() {
         <div className="mt-4 grid gap-3">
           {visibleProducts.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-border px-5 py-10 text-center">
-              <p className="font-medium text-slate-950">No compounds match that search</p>
+              <p className="font-medium text-foreground">No compounds match that search</p>
               <p className="mt-1 text-sm text-muted-foreground">Try another term or clear the current filters.</p>
               <button
                 type="button"
@@ -114,7 +114,7 @@ export default function StorefrontPage() {
                   setQuery('')
                   setCategory('all')
                 }}
-                className="mt-4 inline-flex min-h-11 items-center rounded-full bg-slate-950 px-4 text-sm font-medium text-white"
+                className="mt-4 inline-flex min-h-11 items-center rounded-full bg-foreground px-4 text-sm font-medium text-background"
               >
                 Reset catalog
               </button>
