@@ -37,7 +37,7 @@ export function AddToCartButton({ product }: { product: Product }) {
           >
             <Minus className="h-4 w-4" />
           </button>
-          <span className="w-8 text-center text-base font-semibold text-slate-950">{quantity || 0}</span>
+          <span className="w-8 text-center font-mono text-base font-semibold text-slate-950">{quantity || 0}</span>
           <button
             type="button"
             disabled={quantity >= maxQuantity}

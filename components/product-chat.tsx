@@ -197,7 +197,7 @@ function ChatRichText({
             key={`${part.href}-${index}`}
             href={part.href}
             onClick={onNavigate}
-            className="font-medium text-brand underline underline-offset-2"
+            className="font-mono font-medium text-brand underline underline-offset-2"
           >
             {part.text}
           </Link>

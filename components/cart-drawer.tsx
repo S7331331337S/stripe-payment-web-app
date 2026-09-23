@@ -88,8 +88,8 @@ export function CartDrawer({
                 <div key={item.id} className="motion-item-in flex gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3">
                   <ProductMark product={item} size="sm" />
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-medium text-slate-950">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground">${formatPrice(item.priceInCents)} each</p>
+                    <h3 className="truncate font-mono font-medium text-slate-950">{item.name}</h3>
+                    <p className="font-mono text-sm text-muted-foreground">${formatPrice(item.priceInCents)} each</p>
                     {isLowStock(item.stock) || atMax ? (
                       <p className="mt-1 text-xs font-medium text-amber-700">
                         {item.stock === 0 ? 'No longer available' : `Only ${item.stock} left`}
@@ -106,7 +106,7 @@ export function CartDrawer({
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
-                      <span className="w-6 text-center text-sm font-semibold">{item.quantity}</span>
+                      <span className="w-6 text-center font-mono text-sm font-semibold">{item.quantity}</span>
                       <button
                         type="button"
                         onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
@@ -136,7 +136,7 @@ export function CartDrawer({
       <div className="border-t border-slate-200/80 px-4 py-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Total</span>
-          <span className="text-lg font-semibold text-slate-950">${formatPrice(total)}</span>
+          <span className="font-mono text-lg font-semibold text-slate-950">${formatPrice(total)}</span>
         </div>
         {hasStockIssue ? (
           <p className="mb-2 text-xs text-amber-700">Adjust quantities to match current availability before checkout.</p>

@@ -22,12 +22,12 @@ export function RelatedProducts({ products }: { products: Product[] }) {
             <div className="flex min-w-0 items-center gap-3">
               <ProductMark product={product} size="sm" />
               <div className="min-w-0">
-                <p className="truncate font-medium text-slate-950">{product.name}</p>
+                <p className="truncate font-mono font-medium text-slate-950">{product.name}</p>
                 <p className="mt-0.5 line-clamp-1 text-sm text-slate-600">{product.description}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm font-semibold text-slate-950">${formatPrice(product.priceInCents)}</p>
+              <p className="font-mono text-sm font-semibold text-slate-950">${formatPrice(product.priceInCents)}</p>
               <p className="text-xs text-muted-foreground">{stockLabel(product.stock)}</p>
             </div>
           </Link>

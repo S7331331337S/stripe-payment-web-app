@@ -25,7 +25,7 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
       <p className="reveal-load text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">Detail sheet</p>
       <div className="mt-3 flex items-start gap-3">
         <ProductMark product={product} size="lg" />
-        <h1 className="reveal-clip text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950">
+        <h1 className="reveal-clip font-mono text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950">
           <span className="reveal-clip-inner" style={{ animationDelay: '80ms' }}>
             {product.name}
           </span>
@@ -39,7 +39,7 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Current availability</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">${formatPrice(product.priceInCents)}</p>
+            <p className="mt-2 font-mono text-3xl font-semibold tracking-tight text-slate-950">${formatPrice(product.priceInCents)}</p>
           </div>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-semibold ${

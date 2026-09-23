@@ -31,12 +31,12 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         <div className="flex min-w-0 items-start gap-3">
           <ProductMark product={product} />
           <div className="min-w-0">
-            <h3 className="text-base font-semibold tracking-tight text-slate-950">{product.name}</h3>
+            <h3 className="font-mono text-base font-semibold tracking-tight text-slate-950">{product.name}</h3>
             <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{product.description}</p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-lg font-semibold tracking-tight text-slate-950">${formatPrice(product.priceInCents)}</p>
+          <p className="font-mono text-lg font-semibold tracking-tight text-slate-950">${formatPrice(product.priceInCents)}</p>
           <p className={`text-xs font-medium ${!inStock ? 'text-red-600' : lowStock ? 'text-amber-700' : 'text-emerald-700'}`}>
             {stockLabel(product.stock)}
           </p>

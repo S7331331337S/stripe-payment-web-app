@@ -56,7 +56,7 @@ export function CatalogToolbar({
         ))}
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="font-mono text-xs text-muted-foreground">
         {resultCount === totalCount
           ? `${totalCount} compounds`
           : `${resultCount} of ${totalCount} compounds`}

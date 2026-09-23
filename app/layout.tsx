@@ -1,9 +1,20 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { AppShell } from '@/components/app-shell'
 import { AppUIProvider } from '@/components/app-ui'
 import { CartProvider } from '@/components/cart-provider'
+
+const geistSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist-sans',
+})
+
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-geist-mono',
+})
 
 export const metadata: Metadata = {
   title: "G's Stock | Clinical Research Supply",
@@ -43,8 +54,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="light">
-      <body className="antialiased">
+    <html lang="en" className={`light ${geistSans.variable} ${geistMono.variable}`}>
+      <body className="font-sans antialiased">
         <CartProvider>
           <AppUIProvider>
             <AppShell>{children}</AppShell>

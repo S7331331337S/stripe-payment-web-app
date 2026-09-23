@@ -101,7 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <FlaskConical className="h-3.5 w-3.5" />
               </span>
               <span>
-                <span className="block text-sm font-semibold leading-none tracking-tight">G&apos;s Stock</span>
+                <span className="block font-heading text-sm font-semibold leading-none tracking-tight">G&apos;s Stock</span>
                 <span className="mt-1 block text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   Clinical supply
                 </span>

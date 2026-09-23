@@ -82,15 +82,15 @@ export default function Checkout({
         <ul className="space-y-2 rounded-2xl border border-border/80 bg-card/80 p-4">
           {recapItems.map((item) => (
             <li key={item.id} className="flex items-center justify-between gap-3 text-sm">
-              <span className="min-w-0 truncate text-slate-800">
+              <span className="min-w-0 truncate font-mono text-slate-800">
                 {item.name} × {item.quantity}
               </span>
-              <span className="font-medium text-slate-950">${formatPrice(item.priceInCents * item.quantity)}</span>
+              <span className="font-mono font-medium text-slate-950">${formatPrice(item.priceInCents * item.quantity)}</span>
             </li>
           ))}
           <li className="flex items-center justify-between border-t border-border pt-2 text-sm font-semibold">
             <span>Total</span>
-            <span>${formatPrice(recapTotal)}</span>
+            <span className="font-mono">${formatPrice(recapTotal)}</span>
           </li>
         </ul>
         <Button onClick={onReturnToCatalog ?? onClose} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
