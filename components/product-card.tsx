@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ChevronRight, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProductMark } from '@/components/product-mark'
-import { formatPrice, isLowStock, splitBenefits, stockLabel } from '@/lib/catalog'
+import { formatPrice, isLowStock, splitBenefits, stockLabel, stockToneClass } from '@/lib/catalog'
 import type { Product } from '@/lib/products'
 
 interface ProductCardProps {
@@ -26,18 +26,18 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const lowStock = isLowStock(product.stock)
 
   return (
-    <article className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-4 shadow-[0_10px_30px_-22px_rgba(42,54,92,0.45)]">
+    <article className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-4 shadow-[0_10px_30px_-22px_rgba(42,54,92,0.45)] dark:shadow-[0_12px_32px_-20px_rgba(0,0,0,0.7)]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
           <ProductMark product={product} />
           <div className="min-w-0">
-            <h3 className="text-base font-semibold tracking-tight text-slate-950">{product.name}</h3>
-            <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{product.description}</p>
+            <h3 className="font-mono text-base font-semibold tracking-tight text-foreground">{product.name}</h3>
+            <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground">{product.description}</p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-lg font-semibold tracking-tight text-slate-950">${formatPrice(product.priceInCents)}</p>
-          <p className={`text-xs font-medium ${!inStock ? 'text-red-600' : lowStock ? 'text-amber-700' : 'text-emerald-700'}`}>
+          <p className="font-mono text-lg font-semibold tracking-tight text-foreground">${formatPrice(product.priceInCents)}</p>
+          <p className={`text-xs font-medium ${stockToneClass(product.stock)}`}>
             {stockLabel(product.stock)}
           </p>
         </div>
@@ -52,7 +52,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
             </span>
           ))}
         {lowStock ? (
-          <span className="rounded-full bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-800">Low stock</span>
+          <span className="rounded-full bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">Low stock</span>
         ) : null}
       </div>
 
@@ -60,7 +60,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         <Button
           onClick={handleAddToCart}
           disabled={!inStock}
-          className="h-11 flex-1 rounded-2xl bg-slate-950 text-white transition-transform active:scale-[0.98]"
+          className="h-11 flex-1 rounded-2xl bg-foreground text-background transition-transform active:scale-[0.98]"
         >
           <ShoppingCart className={`h-4 w-4 transition-transform duration-300 ${isAdded ? 'scale-110' : ''}`} />
           <span key={isAdded ? 'added' : 'add'} className="motion-item-in">
@@ -70,7 +70,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
         <Link
           href={`/products/${product.id}`}
           aria-label={`View details for ${product.name}`}
-          className="inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700"
+          className="inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-2xl border border-border bg-card px-3 text-sm font-medium text-foreground"
         >
           Details
           <ChevronRight className="h-4 w-4" />

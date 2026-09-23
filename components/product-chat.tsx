@@ -94,7 +94,7 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
       aria-hidden={!open}
       inert={!open}
       className={cn(
-        'fixed inset-x-0 z-[46] mx-auto flex w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-slate-200/80 bg-background shadow-[0_-18px_50px_-20px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out',
+        'fixed inset-x-0 z-[46] mx-auto flex w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-border/80 bg-background shadow-[0_-18px_50px_-20px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out',
         'bottom-[calc(4.25rem+env(safe-area-inset-bottom))] h-[min(36rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom)))]',
         open ? 'translate-y-0' : 'pointer-events-none translate-y-[120%]',
       )}
@@ -108,7 +108,7 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
           type="button"
           aria-label="Close chat"
           onClick={onClose}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
         >
           <X className="h-5 w-5" />
         </button>
@@ -140,7 +140,7 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
                 key={prompt}
                 type="button"
                 onClick={() => sendMessage(prompt)}
-                className="rounded-full border border-border bg-white px-3 py-2 text-left text-xs font-medium text-slate-700"
+                className="rounded-full border border-border bg-card px-3 py-2 text-left text-xs font-medium text-foreground"
               >
                 {prompt}
               </button>
@@ -153,7 +153,7 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
           event.preventDefault()
           void sendMessage(input)
         }}
-        className="flex gap-2 border-t border-slate-200/80 p-3"
+        className="flex gap-2 border-t border-border/80 p-3"
       >
         <input
           aria-label="Ask about products"
@@ -167,7 +167,7 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
           type="submit"
           aria-label="Send question"
           disabled={loading || !input.trim()}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white disabled:opacity-50"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-foreground text-background disabled:opacity-50"
         >
           <Send className="h-4 w-4" />
         </button>
@@ -197,7 +197,7 @@ function ChatRichText({
             key={`${part.href}-${index}`}
             href={part.href}
             onClick={onNavigate}
-            className="font-medium text-brand underline underline-offset-2"
+            className="font-mono font-medium text-brand underline underline-offset-2"
           >
             {part.text}
           </Link>

@@ -73,27 +73,27 @@ export default function Checkout({
           <CheckCircle2 className="h-6 w-6 text-emerald-600" />
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand">Order received</p>
-            <h3 className="text-xl font-semibold tracking-tight text-slate-950">Checkout complete</h3>
+            <h3 className="text-xl font-semibold tracking-tight text-foreground">Checkout complete</h3>
           </div>
         </div>
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="text-sm leading-6 text-muted-foreground">
           Your research supply order is confirmed. A Stripe receipt will follow with shipping details.
         </p>
         <ul className="space-y-2 rounded-2xl border border-border/80 bg-card/80 p-4">
           {recapItems.map((item) => (
             <li key={item.id} className="flex items-center justify-between gap-3 text-sm">
-              <span className="min-w-0 truncate text-slate-800">
+              <span className="min-w-0 truncate font-mono text-foreground">
                 {item.name} × {item.quantity}
               </span>
-              <span className="font-medium text-slate-950">${formatPrice(item.priceInCents * item.quantity)}</span>
+              <span className="font-mono font-medium text-foreground">${formatPrice(item.priceInCents * item.quantity)}</span>
             </li>
           ))}
           <li className="flex items-center justify-between border-t border-border pt-2 text-sm font-semibold">
             <span>Total</span>
-            <span>${formatPrice(recapTotal)}</span>
+            <span className="font-mono">${formatPrice(recapTotal)}</span>
           </li>
         </ul>
-        <Button onClick={onReturnToCatalog ?? onClose} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
+        <Button onClick={onReturnToCatalog ?? onClose} className="h-12 w-full rounded-2xl bg-foreground text-background">
           Return to catalog
         </Button>
       </div>
@@ -105,11 +105,11 @@ export default function Checkout({
       <div className="space-y-4 p-6">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand">Checkout</p>
-          <h3 className="mt-1 text-xl font-semibold tracking-tight text-slate-950">Could not start checkout</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">{error}</p>
+          <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">Could not start checkout</h3>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{error}</p>
         </div>
         <div className="space-y-2">
-          <Button onClick={() => setRetryToken((value) => value + 1)} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
+          <Button onClick={() => setRetryToken((value) => value + 1)} className="h-12 w-full rounded-2xl bg-foreground text-background">
             Try again
           </Button>
           <Button variant="outline" onClick={onClose} className="h-12 w-full rounded-2xl">

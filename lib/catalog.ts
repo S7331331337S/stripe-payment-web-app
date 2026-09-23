@@ -26,12 +26,12 @@ export function formatPrice(priceInCents: number) {
 }
 
 const PRODUCT_MARKS = [
-  'from-indigo-200 to-sky-100 text-indigo-900',
-  'from-violet-200 to-indigo-100 text-violet-900',
-  'from-sky-200 to-cyan-100 text-sky-900',
-  'from-emerald-100 to-teal-100 text-emerald-900',
-  'from-amber-100 to-orange-100 text-amber-900',
-  'from-rose-100 to-indigo-100 text-rose-900',
+  'from-indigo-200 to-sky-100 text-indigo-900 dark:from-indigo-400/25 dark:to-sky-400/15 dark:text-indigo-100',
+  'from-violet-200 to-indigo-100 text-violet-900 dark:from-violet-400/25 dark:to-indigo-400/15 dark:text-violet-100',
+  'from-sky-200 to-cyan-100 text-sky-900 dark:from-sky-400/25 dark:to-cyan-400/15 dark:text-sky-100',
+  'from-emerald-100 to-teal-100 text-emerald-900 dark:from-emerald-400/20 dark:to-teal-400/15 dark:text-emerald-100',
+  'from-amber-100 to-orange-100 text-amber-900 dark:from-amber-400/20 dark:to-orange-400/15 dark:text-amber-100',
+  'from-rose-100 to-indigo-100 text-rose-900 dark:from-rose-400/20 dark:to-indigo-400/15 dark:text-rose-100',
 ] as const
 
 export function productInitials(name: string) {
@@ -56,6 +56,18 @@ export function stockLabel(stock: number) {
   if (stock <= 0) return 'Unavailable'
   if (isLowStock(stock)) return `${stock} left`
   return 'In stock'
+}
+
+export function stockToneClass(stock: number) {
+  if (stock <= 0) return 'text-red-600 dark:text-red-400'
+  if (isLowStock(stock)) return 'text-amber-700 dark:text-amber-400'
+  return 'text-emerald-700 dark:text-emerald-400'
+}
+
+export function stockBadgeClass(stock: number) {
+  if (stock <= 0) return 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300'
+  if (isLowStock(stock)) return 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+  return 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
 }
 
 export function productSearchText(product: Product) {
