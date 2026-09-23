@@ -1,25 +1,29 @@
 import Link from 'next/link'
-import { ArrowLeft, Compass } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-5 py-16 text-foreground sm:px-8">
-      <div className="w-full max-w-lg text-center">
-        <Compass className="mx-auto h-9 w-9 text-indigo-700" aria-hidden="true" />
-        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.22em] text-indigo-700">404</p>
-        <h1 className="mt-3 font-serif text-5xl tracking-[-0.04em] text-slate-950">
-          This page is not in the catalog.
-        </h1>
-        <p className="mt-5 text-sm leading-6 text-slate-600">
-          The compound or page you were looking for may have been renamed or is no longer stocked.
-        </p>
+    <article className="pt-8">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">Missing page</p>
+      <h1 className="mt-2 max-w-[12ch] text-[2.2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-slate-950">
+        This sheet is not in the catalog.
+      </h1>
+      <p className="mt-4 max-w-sm text-sm leading-6 text-slate-600">
+        The page you opened does not match a current compound or policy note. Browse the collection or return home.
+      </p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Link
+          href="/#catalog"
+          className="inline-flex min-h-12 items-center rounded-2xl bg-slate-950 px-5 text-sm font-medium text-white"
+        >
+          Browse catalog
+        </Link>
         <Link
           href="/"
-          className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full bg-slate-950 px-5 text-sm font-medium text-white transition-transform hover:-translate-y-0.5"
+          className="inline-flex min-h-12 items-center rounded-2xl border border-slate-200 bg-white px-5 text-sm font-medium text-slate-700"
         >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to the catalog
+          Home
         </Link>
       </div>
-    </main>
+    </article>
   )
 }

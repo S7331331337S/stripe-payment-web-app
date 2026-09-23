@@ -1,135 +1,156 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js'
-import { loadStripe, type Stripe } from '@stripe/stripe-js'
-import { AlertTriangle, Loader2 } from 'lucide-react'
-
-import { startCheckoutSession, type CheckoutLineInput } from '@/app/actions/stripe'
+import {
+  EmbeddedCheckout,
+  EmbeddedCheckoutProvider,
+} from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import { CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { formatPrice, getProductById } from '@/lib/catalog'
+import { startCheckoutSession } from '../app/actions/stripe'
 
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
-// Loaded once per page, not per render — loadStripe is memoised by Stripe.js but
-// the promise identity matters to EmbeddedCheckoutProvider. The rejection is
-// absorbed here (resolving to null) so a blocked or offline Stripe.js becomes a
-// message in the checkout panel instead of an unhandled promise rejection.
-const stripePromise: Promise<Stripe | null> | null = publishableKey
-  ? loadStripe(publishableKey).catch((error: unknown) => {
-      console.error('[checkout] Stripe.js failed to load', error)
+const stripePromise = publishableKey
+  ? loadStripe(publishableKey).catch((cause: unknown) => {
+      console.error('[checkout] Stripe.js failed to load', cause)
       return null
     })
   : null
 
-type Status =
-  | { state: 'loading' }
-  | { state: 'ready'; clientSecret: string }
-  | { state: 'error'; message: string }
-
 export default function Checkout({
   items,
   onComplete,
+  onClose,
+  onReturnToCatalog,
 }: {
-  items: CheckoutLineInput[]
+  items: { productId: string; quantity: number }[]
   onComplete?: () => void
+  onClose?: () => void
+  onReturnToCatalog?: () => void
 }) {
-  const [status, setStatus] = useState<Status>({ state: 'loading' })
-  const [attempt, setAttempt] = useState(0)
+  const [orderItems] = useState(items)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [complete, setComplete] = useState(false)
+  const [retryToken, setRetryToken] = useState(0)
 
-  // `items` is rebuilt on every parent render, so depending on it directly would
-  // create a new Stripe session each time. Key the effect on cart *contents*.
-  const cartKey = useMemo(
+  const recapItems = useMemo(
     () =>
-      items
-        .map(({ productId, quantity }) => `${productId}:${quantity}`)
-        .sort()
-        .join('|'),
-    [items],
+      orderItems.flatMap((item) => {
+        const product = getProductById(item.productId)
+        return product ? [{ ...product, quantity: item.quantity }] : []
+      }),
+    [orderItems],
   )
+  const recapTotal = recapItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
 
   useEffect(() => {
+    let active = true
+    setClientSecret(null)
+    setError(null)
+
     if (!stripePromise) {
-      setStatus({
-        state: 'error',
-        message:
-          'Checkout is not configured yet. NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is missing from this deployment.',
-      })
+      setError(
+        'Checkout is not configured yet. NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is missing from this deployment.',
+      )
       return
     }
 
-    let active = true
-    setStatus({ state: 'loading' })
-
-    Promise.all([stripePromise, startCheckoutSession(items)])
+    Promise.all([stripePromise, startCheckoutSession(orderItems)])
       .then(([stripe, result]) => {
         if (!active) return
         if (!stripe) {
-          setStatus({
-            state: 'error',
-            message:
-              'We could not load Stripe.js. Disable any script blockers for this site, then try again.',
-          })
+          setError('We could not load Stripe.js. Disable any script blockers for this site, then try again.')
           return
         }
-        setStatus(
-          result.ok
-            ? { state: 'ready', clientSecret: result.clientSecret }
-            : { state: 'error', message: result.error },
-        )
+        if ('error' in result) {
+          setError(result.error)
+          return
+        }
+        setClientSecret(result.clientSecret)
       })
       .catch(() => {
-        if (!active) return
-        setStatus({
-          state: 'error',
-          message: 'We could not reach the payment service. Please check your connection and try again.',
-        })
+        if (active) setError('Checkout could not start. Please try again.')
       })
-
     return () => {
       active = false
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- cartKey stands in for `items`
-  }, [cartKey, attempt])
+  }, [orderItems, retryToken])
 
-  const handleComplete = useCallback(() => onComplete?.(), [onComplete])
+  const handleComplete = useCallback(() => {
+    setComplete(true)
+    onComplete?.()
+  }, [onComplete])
 
-  if (status.state === 'loading') {
+  if (complete) {
     return (
-      <div className="flex items-center gap-3 p-6 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-        Preparing secure checkout…
+      <div className="space-y-5 p-6">
+        <div className="flex items-center gap-3">
+          <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand">Order received</p>
+            <h3 className="text-xl font-semibold tracking-tight text-slate-950">Checkout complete</h3>
+          </div>
+        </div>
+        <p className="text-sm leading-6 text-slate-600">
+          Your research supply order is confirmed. A Stripe receipt will follow with shipping details.
+        </p>
+        <ul className="space-y-2 rounded-2xl border border-border/80 bg-card/80 p-4">
+          {recapItems.map((item) => (
+            <li key={item.id} className="flex items-center justify-between gap-3 text-sm">
+              <span className="min-w-0 truncate text-slate-800">
+                {item.name} × {item.quantity}
+              </span>
+              <span className="font-medium text-slate-950">${formatPrice(item.priceInCents * item.quantity)}</span>
+            </li>
+          ))}
+          <li className="flex items-center justify-between border-t border-border pt-2 text-sm font-semibold">
+            <span>Total</span>
+            <span>${formatPrice(recapTotal)}</span>
+          </li>
+        </ul>
+        <Button onClick={onReturnToCatalog ?? onClose} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
+          Return to catalog
+        </Button>
       </div>
     )
   }
 
-  if (status.state === 'error') {
+  if (error) {
     return (
-      <div role="alert" className="p-6">
-        <div className="flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 p-4">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-foreground">Checkout unavailable</p>
-            <p className="mt-1 text-sm text-muted-foreground">{status.message}</p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-4"
-              onClick={() => setAttempt((current) => current + 1)}
-            >
-              Try again
-            </Button>
-          </div>
+      <div className="space-y-4 p-6">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand">Checkout</p>
+          <h3 className="mt-1 text-xl font-semibold tracking-tight text-slate-950">Could not start checkout</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{error}</p>
+        </div>
+        <div className="space-y-2">
+          <Button onClick={() => setRetryToken((value) => value + 1)} className="h-12 w-full rounded-2xl bg-slate-950 text-white">
+            Try again
+          </Button>
+          <Button variant="outline" onClick={onClose} className="h-12 w-full rounded-2xl">
+            Close
+          </Button>
         </div>
       </div>
     )
   }
 
+  if (!clientSecret) {
+    return <div className="p-6 text-sm text-muted-foreground">Preparing secure checkout…</div>
+  }
+
   return (
     <div id="checkout">
       <EmbeddedCheckoutProvider
-        key={status.clientSecret}
         stripe={stripePromise}
-        options={{ clientSecret: status.clientSecret, onComplete: handleComplete }}
+        options={{
+          clientSecret,
+          onComplete: handleComplete,
+        }}
       >
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>

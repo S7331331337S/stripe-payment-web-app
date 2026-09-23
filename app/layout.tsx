@@ -55,11 +55,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
+      { url: '/icon', type: 'image/png' },
       { url: '/icon.svg', type: 'image/svg+xml' },
     ],
-    apple: '/apple-icon.png',
+    apple: '/apple-icon',
   },
 }
 
@@ -68,9 +67,9 @@ export const viewport: Viewport = {
   initialScale: 1,
   // Lets the shell paint under the notch and home indicator.
   viewportFit: 'cover',
-  // The shell is light-only (`<html className="light">`), so declaring both
-  // would tell the browser to render form controls for a dark theme that the
-  // page never applies.
+  // The shell is hard-coded `<html className="light">`, so advertising a dark
+  // scheme would have the browser style form controls for a theme the page
+  // never applies. Revisit together if a theme toggle lands.
   colorScheme: 'light',
   themeColor: '#fafafa',
 }

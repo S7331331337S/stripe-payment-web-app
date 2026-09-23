@@ -9,29 +9,29 @@ export interface CheckoutLineInput {
   quantity: number
 }
 
-export type CheckoutSessionResult =
-  | { ok: true; clientSecret: string }
-  | { ok: false; error: string }
+export type CheckoutSessionResult = { clientSecret: string } | { error: string }
 
 const MAX_LINE_ITEMS = 20
 
 /**
  * Creates an embedded Checkout Session for the given cart.
  *
- * Pricing, availability, and totals are resolved from the server-side catalog —
- * the client only sends product ids and quantities, so a tampered cart cannot
+ * Pricing and availability are resolved from the server-side catalog — the
+ * client only sends product ids and quantities, so a tampered cart cannot
  * change what is charged.
  *
  * Errors are returned rather than thrown: Next.js replaces thrown Server Action
  * errors with an opaque digest in production, which would leave the checkout UI
- * unable to tell the customer what went wrong.
+ * unable to tell the customer what went wrong. The returned text is always one
+ * of our own messages — raw Stripe errors are logged, never sent to the browser,
+ * since they can disclose account state and internal detail.
  */
 export async function startCheckoutSession(items: CheckoutLineInput[]): Promise<CheckoutSessionResult> {
   if (!Array.isArray(items) || items.length === 0) {
-    return { ok: false, error: 'Your cart is empty.' }
+    return { error: 'Your cart is empty.' }
   }
   if (items.length > MAX_LINE_ITEMS) {
-    return { ok: false, error: `Checkout supports up to ${MAX_LINE_ITEMS} distinct products at a time.` }
+    return { error: `Checkout supports up to ${MAX_LINE_ITEMS} distinct products at a time.` }
   }
 
   const lineItems = []
@@ -40,17 +40,16 @@ export async function startCheckoutSession(items: CheckoutLineInput[]): Promise<
   for (const { productId, quantity } of items) {
     const product = PRODUCTS.find((candidate) => candidate.id === productId)
     if (!product) {
-      return { ok: false, error: 'One of the items in your cart is no longer available.' }
+      return { error: 'One of the items in your cart is no longer available.' }
     }
     if (product.stock < 1) {
-      return { ok: false, error: `${product.name} is currently out of stock.` }
+      return { error: `${product.name} is currently out of stock.` }
     }
     if (!Number.isInteger(quantity) || quantity < 1) {
-      return { ok: false, error: `Please choose a valid quantity for ${product.name}.` }
+      return { error: `Please choose a valid quantity for ${product.name}.` }
     }
     if (quantity > product.stock) {
       return {
-        ok: false,
         error: `Only ${product.stock} ${product.stock === 1 ? 'unit' : 'units'} of ${product.name} remain.`,
       }
     }
@@ -73,8 +72,9 @@ export async function startCheckoutSession(items: CheckoutLineInput[]): Promise<
       ui_mode: 'embedded_page',
       mode: 'payment',
       line_items: lineItems,
-      // `if_required` keeps the flow inside the modal for card payments while
-      // still allowing redirect-based methods, which `never` would disable.
+      // `if_required` keeps card payments inside the sheet (so the in-sheet
+      // recap still shows) while allowing redirect-based methods, which
+      // `never` would disable outright.
       redirect_on_completion: 'if_required',
       return_url: `${getSiteUrl()}/order/complete?session_id={CHECKOUT_SESSION_ID}`,
       customer_creation: 'always',
@@ -89,16 +89,15 @@ export async function startCheckoutSession(items: CheckoutLineInput[]): Promise<
     })
 
     if (!session.client_secret) {
-      return { ok: false, error: 'Stripe did not return a checkout session. Please try again.' }
+      return { error: 'Stripe did not return a checkout session. Please try again.' }
     }
 
-    return { ok: true, clientSecret: session.client_secret }
+    return { clientSecret: session.client_secret }
   } catch (error) {
-    // Log Stripe's structured fields, not just the message. `type`/`code` are
-    // what distinguish a transient failure from a misconfigured account — most
+    // Log Stripe's structured fields, not just the message. `type`/`code`
+    // distinguish a transient failure from a misconfigured account — most
     // importantly `You cannot currently make live charges`, which means the
-    // Stripe account has live keys but has not finished activation. No Stripe
-    // internals are ever returned to the customer.
+    // account has live keys but has not finished activation.
     const stripeError = error as {
       type?: string
       code?: string
@@ -120,9 +119,6 @@ export async function startCheckoutSession(items: CheckoutLineInput[]): Promise<
       )
     }
 
-    return {
-      ok: false,
-      error: 'We could not start checkout right now. Please try again in a moment.',
-    }
+    return { error: 'We could not start checkout right now. Please try again in a moment.' }
   }
 }

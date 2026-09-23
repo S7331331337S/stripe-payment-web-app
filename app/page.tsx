@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { ArrowDown, FlaskConical, LockKeyhole, Package, Sparkles } from 'lucide-react'
+import { CatalogToolbar } from '@/components/catalog-toolbar'
 import { ProductCard } from '@/components/product-card'
 import { Reveal } from '@/components/reveal'
 import { useCart } from '@/components/cart-provider'
+import { filterCatalog, type CatalogCategoryId } from '@/lib/catalog'
 import { PRODUCTS } from '@/lib/products'
 
 const TRUST_POINTS = [
@@ -15,6 +18,9 @@ const TRUST_POINTS = [
 
 export default function StorefrontPage() {
   const { addToCart } = useCart()
+  const [query, setQuery] = useState('')
+  const [category, setCategory] = useState<CatalogCategoryId | 'all'>('all')
+  const visibleProducts = useMemo(() => filterCatalog(PRODUCTS, query, category), [query, category])
 
   useEffect(() => {
     const hash = window.location.hash
@@ -82,20 +88,44 @@ export default function StorefrontPage() {
 
       <section id="catalog" className="scroll-mt-20 border-t border-border pt-10">
         <Reveal>
-          <div className="mb-4 flex items-end justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">The collection</p>
-              <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-foreground">Browse the catalog</h2>
-            </div>
-            <p className="pb-1 text-xs text-muted-foreground">{PRODUCTS.length} compounds</p>
+          <div className="mb-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">The collection</p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-foreground">Browse the catalog</h2>
           </div>
         </Reveal>
-        <div className="grid gap-3">
-          {PRODUCTS.map((product, index) => (
-            <Reveal key={product.id} delayMs={(index % 3) * 80}>
-              <ProductCard product={product} onAddToCart={addToCart} />
-            </Reveal>
-          ))}
+        <Reveal>
+          <CatalogToolbar
+            query={query}
+            category={category}
+            resultCount={visibleProducts.length}
+            totalCount={PRODUCTS.length}
+            onQueryChange={setQuery}
+            onCategoryChange={setCategory}
+          />
+        </Reveal>
+        <div className="mt-4 grid gap-3">
+          {visibleProducts.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-border px-5 py-10 text-center">
+              <p className="font-medium text-slate-950">No compounds match that search</p>
+              <p className="mt-1 text-sm text-muted-foreground">Try another term or clear the current filters.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery('')
+                  setCategory('all')
+                }}
+                className="mt-4 inline-flex min-h-11 items-center rounded-full bg-slate-950 px-4 text-sm font-medium text-white"
+              >
+                Reset catalog
+              </button>
+            </div>
+          ) : (
+            visibleProducts.map((product, index) => (
+              <Reveal key={product.id} delayMs={(index % 3) * 80}>
+                <ProductCard product={product} onAddToCart={addToCart} />
+              </Reveal>
+            ))
+          )}
         </div>
       </section>
 
@@ -107,7 +137,19 @@ export default function StorefrontPage() {
           </h2>
           <p className="mt-3 text-sm leading-6 text-background/70">
             Products in this catalog are intended for research use only. Please review each detail sheet and all applicable
-            handling and compliance requirements before ordering.
+            handling and compliance requirements before ordering. Review{' '}
+            <Link href="/terms" className="underline decoration-brand-muted underline-offset-2">
+              terms
+            </Link>
+            ,{' '}
+            <Link href="/shipping" className="underline decoration-brand-muted underline-offset-2">
+              shipping
+            </Link>
+            , and{' '}
+            <Link href="/privacy" className="underline decoration-brand-muted underline-offset-2">
+              privacy
+            </Link>{' '}
+            before you check out.
           </p>
         </section>
       </Reveal>

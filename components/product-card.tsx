@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ProductMark } from '@/components/product-mark'
+import { formatPrice, isLowStock, splitBenefits, stockLabel } from '@/lib/catalog'
 import type { Product } from '@/lib/products'
 
 interface ProductCardProps {
@@ -25,33 +27,38 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
     resetTimer.current = setTimeout(() => setIsAdded(false), 2000)
   }
 
-  const priceInDollars = (product.priceInCents / 100).toFixed(2)
   const inStock = product.stock > 0
+  const lowStock = isLowStock(product.stock)
 
   return (
     <article className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-4 shadow-[0_10px_30px_-22px_rgba(42,54,92,0.45)]">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-base font-semibold tracking-tight text-slate-950">{product.name}</h3>
-          <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{product.description}</p>
+        <div className="flex min-w-0 items-start gap-3">
+          <ProductMark product={product} />
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold tracking-tight text-slate-950">{product.name}</h3>
+            <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{product.description}</p>
+          </div>
         </div>
         <div className="text-right">
-          <p className="text-lg font-semibold tracking-tight text-slate-950">${priceInDollars}</p>
-          <p className={`text-xs font-medium ${inStock ? 'text-emerald-700' : 'text-red-600'}`}>
-            {inStock ? 'In stock' : 'Unavailable'}
+          <p className="text-lg font-semibold tracking-tight text-slate-950">${formatPrice(product.priceInCents)}</p>
+          <p className={`text-xs font-medium ${!inStock ? 'text-red-600' : lowStock ? 'text-amber-700' : 'text-emerald-700'}`}>
+            {stockLabel(product.stock)}
           </p>
         </div>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
-        {product.benefits
-          .split(',')
+        {splitBenefits(product.benefits)
           .slice(0, 3)
           .map((benefit) => (
-            <span key={benefit.trim()} className="rounded-full bg-brand-soft px-2 py-1 text-[11px] font-medium text-brand">
-              {benefit.trim()}
+            <span key={benefit} className="rounded-full bg-brand-soft px-2 py-1 text-[11px] font-medium text-brand">
+              {benefit}
             </span>
           ))}
+        {lowStock ? (
+          <span className="rounded-full bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-800">Low stock</span>
+        ) : null}
       </div>
 
       <div className="mt-4 flex gap-2">
