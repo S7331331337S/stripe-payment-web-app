@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -15,11 +15,16 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const [isAdded, setIsAdded] = useState(false)
+  const resetTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  // Clear the pending reset so an unmounting card cannot set state.
+  useEffect(() => () => clearTimeout(resetTimer.current), [])
 
   const handleAddToCart = () => {
     onAddToCart(product)
     setIsAdded(true)
-    setTimeout(() => setIsAdded(false), 2000)
+    clearTimeout(resetTimer.current)
+    resetTimer.current = setTimeout(() => setIsAdded(false), 2000)
   }
 
   const inStock = product.stock > 0

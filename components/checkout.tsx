@@ -11,7 +11,14 @@ import { Button } from '@/components/ui/button'
 import { formatPrice, getProductById } from '@/lib/catalog'
 import { startCheckoutSession } from '../app/actions/stripe'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '')
+const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+
+const stripePromise = publishableKey
+  ? loadStripe(publishableKey).catch((cause: unknown) => {
+      console.error('[checkout] Stripe.js failed to load', cause)
+      return null
+    })
+  : null
 
 export default function Checkout({
   items,
@@ -44,14 +51,26 @@ export default function Checkout({
     let active = true
     setClientSecret(null)
     setError(null)
-    startCheckoutSession(orderItems)
-      .then((result) => {
+
+    if (!stripePromise) {
+      setError(
+        'Checkout is not configured yet. NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is missing from this deployment.',
+      )
+      return
+    }
+
+    Promise.all([stripePromise, startCheckoutSession(orderItems)])
+      .then(([stripe, result]) => {
         if (!active) return
-        if ('error' in result && result.error) {
+        if (!stripe) {
+          setError('We could not load Stripe.js. Disable any script blockers for this site, then try again.')
+          return
+        }
+        if ('error' in result) {
           setError(result.error)
           return
         }
-        setClientSecret(result.clientSecret ?? null)
+        setClientSecret(result.clientSecret)
       })
       .catch(() => {
         if (active) setError('Checkout could not start. Please try again.')

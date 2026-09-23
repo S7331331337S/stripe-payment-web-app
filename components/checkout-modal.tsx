@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import Checkout from './checkout'
 
@@ -12,13 +13,32 @@ interface CheckoutModalProps {
 }
 
 export function CheckoutModal({ items, isOpen, onClose, onComplete, onReturnToCatalog }: CheckoutModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
+  // The page behind the sheet stops scrolling while it is open, and focus moves
+  // into it. Escape is handled by AppShell, which owns the open state.
+  useEffect(() => {
+    if (!isOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    closeButtonRef.current?.focus()
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [isOpen])
+
   if (!isOpen || !items.length) return null
 
   return (
-    <div className="motion-sheet-in fixed inset-0 z-[60] flex flex-col bg-background pt-[env(safe-area-inset-top)]">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkout-modal-title"
+      className="motion-sheet-in fixed inset-0 z-[60] flex flex-col bg-background pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex w-full max-w-lg items-center justify-between border-b border-border/80 px-4 py-3">
-        <h2 className="text-lg font-semibold tracking-tight">Checkout</h2>
+        <h2 id="checkout-modal-title" className="text-lg font-semibold tracking-tight">Checkout</h2>
         <button
+          ref={closeButtonRef}
           type="button"
           onClick={onClose}
           className="flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"

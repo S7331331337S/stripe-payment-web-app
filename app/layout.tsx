@@ -8,6 +8,7 @@ import { CartProvider } from '@/components/cart-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeScript } from '@/components/theme-script'
 import { THEME_COLOR_DARK, THEME_COLOR_LIGHT } from '@/lib/theme'
+import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl } from '@/lib/site'
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -20,13 +21,34 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Mstrmnd | Clinical Research Supply",
-  description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
-  generator: 'v0.app',
+  // Required so relative OG/canonical URLs resolve to absolute ones.
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: `${SITE_NAME} | Clinical Research Supply`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: 'website',
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | Clinical Research Supply`,
+    description: SITE_DESCRIPTION,
+    url: '/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME} | Clinical Research Supply`,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: "Mstrmnd",
+    title: SITE_NAME,
   },
   formatDetection: {
     telephone: false,

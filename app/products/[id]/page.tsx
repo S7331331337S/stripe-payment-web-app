@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Check, ShieldCheck } from 'lucide-react'
 import { AddToCartButton } from '@/components/add-to-cart-button'
@@ -10,6 +11,9 @@ import { PRODUCTS } from '@/lib/products'
 export function generateStaticParams() {
   return PRODUCTS.map((product) => ({ id: product.id }))
 }
+
+// Every product is known at build time, so anything else is a 404.
+export const dynamicParams = false
 
 export default async function ProductDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -88,8 +92,26 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
   )
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
   const { id } = await params
   const product = PRODUCTS.find((item) => item.id === id)
-  return { title: product ? `${product.name} | Mstrmnd` : "Product | Mstrmnd" }
+  if (!product) return { title: 'Product not found' }
+
+  // The brand suffix comes from the title template in app/layout.tsx, so the
+  // name is not repeated here.
+  return {
+    title: product.name,
+    description: product.description,
+    alternates: { canonical: `/products/${product.id}` },
+    openGraph: {
+      type: 'website',
+      title: product.name,
+      description: product.description,
+      url: `/products/${product.id}`,
+    },
+  }
 }

@@ -1,37 +1,82 @@
 'use server'
 
-import { stripe } from '../../lib/stripe'
-import { PRODUCTS } from '../../lib/products'
+import { getStripe } from '@/lib/stripe'
+import { PRODUCTS } from '@/lib/products'
+import { getSiteUrl } from '@/lib/site'
 
-export async function startCheckoutSession(items: { productId: string; quantity: number }[]) {
-  try {
-    if (!items.length) {
-      return { error: 'Your cart is empty.' }
+export interface CheckoutLineInput {
+  productId: string
+  quantity: number
+}
+
+export type CheckoutSessionResult = { clientSecret: string } | { error: string }
+
+const MAX_LINE_ITEMS = 20
+
+/**
+ * Creates an embedded Checkout Session for the given cart.
+ *
+ * Pricing and availability are resolved from the server-side catalog — the
+ * client only sends product ids and quantities, so a tampered cart cannot
+ * change what is charged.
+ *
+ * Errors are returned rather than thrown: Next.js replaces thrown Server Action
+ * errors with an opaque digest in production, which would leave the checkout UI
+ * unable to tell the customer what went wrong. The returned text is always one
+ * of our own messages — raw Stripe errors are logged, never sent to the browser,
+ * since they can disclose account state and internal detail.
+ */
+export async function startCheckoutSession(items: CheckoutLineInput[]): Promise<CheckoutSessionResult> {
+  if (!Array.isArray(items) || items.length === 0) {
+    return { error: 'Your cart is empty.' }
+  }
+  if (items.length > MAX_LINE_ITEMS) {
+    return { error: `Checkout supports up to ${MAX_LINE_ITEMS} distinct products at a time.` }
+  }
+
+  const lineItems = []
+  const summary: string[] = []
+
+  for (const { productId, quantity } of items) {
+    const product = PRODUCTS.find((candidate) => candidate.id === productId)
+    if (!product) {
+      return { error: 'One of the items in your cart is no longer available.' }
+    }
+    if (product.stock < 1) {
+      return { error: `${product.name} is currently out of stock.` }
+    }
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      return { error: `Please choose a valid quantity for ${product.name}.` }
+    }
+    if (quantity > product.stock) {
+      return {
+        error: `Only ${product.stock} ${product.stock === 1 ? 'unit' : 'units'} of ${product.name} remain.`,
+      }
     }
 
-    const lineItems = items.map(({ productId, quantity }) => {
-      const product = PRODUCTS.find((p) => p.id === productId)
-      if (!product) throw new Error(`Product with id "${productId}" not found`)
-      if (!Number.isInteger(quantity) || quantity < 1 || quantity > product.stock) {
-        throw new Error(`Invalid quantity for ${product.name}`)
-      }
-      return {
-        price_data: {
-          currency: 'usd',
-          product_data: { name: product.name, description: product.description },
-          unit_amount: product.priceInCents,
-        },
-        quantity,
-      }
+    lineItems.push({
+      price_data: {
+        currency: 'usd',
+        product_data: { name: product.name, description: product.description },
+        unit_amount: product.priceInCents,
+      },
+      quantity,
     })
+    summary.push(`${product.id}x${quantity}`)
+  }
 
-    const session = await stripe.checkout.sessions.create({
+  try {
+    const session = await getStripe().checkout.sessions.create({
       // `embedded_page` replaced `embedded` in API version 2026-03-25.dahlia
       // (stripe-node v21+). On stripe-node v20 or older, use `embedded`.
       ui_mode: 'embedded_page',
-      redirect_on_completion: 'never',
-      line_items: lineItems,
       mode: 'payment',
+      line_items: lineItems,
+      // `if_required` keeps card payments inside the sheet (so the in-sheet
+      // recap still shows) while allowing redirect-based methods, which
+      // `never` would disable outright.
+      redirect_on_completion: 'if_required',
+      return_url: `${getSiteUrl()}/order/complete?session_id={CHECKOUT_SESSION_ID}`,
       customer_creation: 'always',
       shipping_address_collection: {
         allowed_countries: ['US'],
@@ -39,16 +84,41 @@ export async function startCheckoutSession(items: { productId: string; quantity:
       phone_number_collection: {
         enabled: true,
       },
+      // Read back by the webhook handler so fulfilment knows what was ordered.
+      metadata: { cart: summary.join(',').slice(0, 500) },
     })
 
     if (!session.client_secret) {
-      return { error: 'Checkout could not start. Please try again.' }
+      return { error: 'Stripe did not return a checkout session. Please try again.' }
     }
 
     return { clientSecret: session.client_secret }
   } catch (error) {
-    console.error('Checkout session failed', error)
-    const message = error instanceof Error ? error.message : 'Checkout could not start. Please try again.'
-    return { error: message }
+    // Log Stripe's structured fields, not just the message. `type`/`code`
+    // distinguish a transient failure from a misconfigured account — most
+    // importantly `You cannot currently make live charges`, which means the
+    // account has live keys but has not finished activation.
+    const stripeError = error as {
+      type?: string
+      code?: string
+      statusCode?: number
+      message?: string
+    }
+    console.error('[checkout] failed to create session', {
+      type: stripeError.type,
+      code: stripeError.code,
+      statusCode: stripeError.statusCode,
+      message: stripeError.message,
+    })
+
+    if (stripeError.message?.includes('cannot currently make live charges')) {
+      console.error(
+        '[checkout] ACTION REQUIRED: this Stripe account is not activated for live charges. ' +
+          'Complete activation at https://dashboard.stripe.com/account/onboarding, ' +
+          'or set test keys (sk_test_… / pk_test_…) until it is.',
+      )
+    }
+
+    return { error: 'We could not start checkout right now. Please try again in a moment.' }
   }
 }
