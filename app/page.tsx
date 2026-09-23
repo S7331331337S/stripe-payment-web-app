@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowDown, FlaskConical, LockKeyhole, Package, Sparkles } from 'lucide-react'
 import { CatalogToolbar } from '@/components/catalog-toolbar'
+import { HeroPointCloud } from '@/components/hero-point-cloud'
 import { ProductCard } from '@/components/product-card'
 import { Reveal } from '@/components/reveal'
 import { useCart } from '@/components/cart-provider'
@@ -31,19 +32,20 @@ export default function StorefrontPage() {
 
   return (
     <>
-      <section className="relative mb-[var(--app-footer)] flex min-h-[calc(100dvh-var(--app-chrome))] flex-col justify-between overflow-hidden py-3">
+      <section className="relative isolate mb-[var(--app-footer)] flex min-h-[calc(100dvh-var(--app-chrome))] flex-col justify-between overflow-hidden py-3">
         <div className="motion-float-slow pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-indigo-200/50 blur-3xl dark:bg-indigo-500/20" />
         <div className="motion-float-slower pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-sky-100/70 blur-3xl dark:bg-sky-400/15" />
+        <HeroPointCloud />
 
         <p
-          className="reveal-load relative inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand"
+          className="reveal-load relative z-10 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand"
           style={{ animationDelay: '40ms' }}
         >
           <Sparkles className="h-3.5 w-3.5" />
           Curated research supply
         </p>
 
-        <div className="relative">
+        <div className="relative z-10">
           <h1 className="max-w-[11ch] text-[2.55rem] font-semibold leading-[0.98] tracking-[-0.05em] text-foreground">
             <span className="reveal-clip block">
               <span className="reveal-clip-inner" style={{ animationDelay: '110ms' }}>
@@ -62,7 +64,7 @@ export default function StorefrontPage() {
           </p>
         </div>
 
-        <div className="relative space-y-5">
+        <div className="relative z-10 space-y-5">
           <div className="grid grid-cols-3 gap-2">
             {TRUST_POINTS.map(({ icon: Icon, title, text }) => (
               <div key={title} className="flex flex-col items-center text-center">
