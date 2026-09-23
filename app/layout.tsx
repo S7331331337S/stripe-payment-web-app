@@ -20,13 +20,13 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "G's Stock | Clinical Research Supply",
+  title: "Mstrmnd | Clinical Research Supply",
   description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
   generator: 'v0.app',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: "G's Stock",
+    title: "Mstrmnd",
   },
   formatDetection: {
     telephone: false,
