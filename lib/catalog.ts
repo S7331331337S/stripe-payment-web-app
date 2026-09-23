@@ -25,6 +25,29 @@ export function formatPrice(priceInCents: number) {
   return (priceInCents / 100).toFixed(2)
 }
 
+const PRODUCT_MARKS = [
+  'from-indigo-200 to-sky-100 text-indigo-900',
+  'from-violet-200 to-indigo-100 text-violet-900',
+  'from-sky-200 to-cyan-100 text-sky-900',
+  'from-emerald-100 to-teal-100 text-emerald-900',
+  'from-amber-100 to-orange-100 text-amber-900',
+  'from-rose-100 to-indigo-100 text-rose-900',
+] as const
+
+export function productInitials(name: string) {
+  const base = name.replace(/\s+\d+\s*mg$/i, '').replace(/[^A-Za-z0-9+/ -]/g, '').trim()
+  const tokens = base.split(/[\s/]+/).filter(Boolean)
+  const first = tokens[0] ?? 'GS'
+  if (tokens.length >= 2 && tokens[1]) return `${first[0] ?? ''}${tokens[1][0] ?? ''}`.toUpperCase()
+  if (/^[A-Za-z]+\d+$/.test(first)) return first.slice(0, 3).toUpperCase()
+  return first.slice(0, 3).toUpperCase()
+}
+
+export function productMarkClass(id: string) {
+  const hash = [...id].reduce((sum, character) => sum + character.charCodeAt(0), 0)
+  return PRODUCT_MARKS[hash % PRODUCT_MARKS.length]
+}
+
 export function isLowStock(stock: number) {
   return stock > 0 && stock <= LOW_STOCK_THRESHOLD
 }

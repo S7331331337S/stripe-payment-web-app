@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ProductMark } from '@/components/product-mark'
 import { formatPrice, isLowStock, splitBenefits, stockLabel } from '@/lib/catalog'
 import type { Product } from '@/lib/products'
 
@@ -27,9 +28,12 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   return (
     <article className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-4 shadow-[0_10px_30px_-22px_rgba(42,54,92,0.45)]">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-base font-semibold tracking-tight text-slate-950">{product.name}</h3>
-          <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{product.description}</p>
+        <div className="flex min-w-0 items-start gap-3">
+          <ProductMark product={product} />
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold tracking-tight text-slate-950">{product.name}</h3>
+            <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{product.description}</p>
+          </div>
         </div>
         <div className="text-right">
           <p className="text-lg font-semibold tracking-tight text-slate-950">${formatPrice(product.priceInCents)}</p>

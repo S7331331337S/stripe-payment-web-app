@@ -7,6 +7,7 @@ import { ChevronLeft, FlaskConical, House, MessageCircle, ShoppingBag, Sparkles 
 import { CartDrawer } from '@/components/cart-drawer'
 import { CheckoutModal } from '@/components/checkout-modal'
 import { ProductChat } from '@/components/product-chat'
+import { SiteFooter } from '@/components/site-footer'
 import { useAppUI } from '@/components/app-ui'
 import { useCart } from '@/components/cart-provider'
 import { cn } from '@/lib/utils'
@@ -43,6 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [isCheckoutOpen, closeCheckout, closePanel])
 
   const isProductPage = pathname.startsWith('/products/')
+  const isNestedPage = pathname !== '/'
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
   let activeTab: FooterTab = 'home'
@@ -76,14 +78,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="app-shell min-h-dvh bg-background text-foreground">
       <header className="fixed inset-x-0 top-0 z-40 border-b border-border/80 bg-background/88 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
-          {isProductPage ? (
+          {isNestedPage ? (
             <Link
-              href="/"
+              href={isProductPage ? '/' : '/'}
               className="inline-flex min-h-11 min-w-11 items-center gap-1 text-sm font-medium text-slate-700"
-              aria-label="Back to catalog"
+              aria-label={isProductPage ? 'Back to catalog' : 'Back to home'}
             >
               <ChevronLeft className="h-5 w-5" />
-              Catalog
+              {isProductPage ? 'Catalog' : 'Home'}
             </Link>
           ) : (
             <a
@@ -114,6 +116,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <main id="top" className="mx-auto w-full max-w-lg px-4 pt-[calc(3.5rem+env(safe-area-inset-top))] pb-[calc(5.25rem+env(safe-area-inset-bottom))]">
         {children}
+        <SiteFooter />
       </main>
 
       {panel !== 'none' && (
