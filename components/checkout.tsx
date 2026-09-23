@@ -44,14 +44,18 @@ export default function Checkout({
     let active = true
     setClientSecret(null)
     setError(null)
-    startCheckoutSession(orderItems).then((result) => {
-      if (!active) return
-      if ('error' in result && result.error) {
-        setError(result.error)
-        return
-      }
-      setClientSecret(result.clientSecret ?? null)
-    })
+    startCheckoutSession(orderItems)
+      .then((result) => {
+        if (!active) return
+        if ('error' in result && result.error) {
+          setError(result.error)
+          return
+        }
+        setClientSecret(result.clientSecret ?? null)
+      })
+      .catch(() => {
+        if (active) setError('Checkout could not start. Please try again.')
+      })
     return () => {
       active = false
     }

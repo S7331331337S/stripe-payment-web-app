@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Minus, Plus, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAppUI } from '@/components/app-ui'
@@ -15,6 +15,13 @@ export function AddToCartButton({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(product.stock > 0 ? 1 : 0)
   const [added, setAdded] = useState(false)
   const canAdd = product.stock > 0 && maxQuantity > 0 && quantity > 0
+
+  useEffect(() => {
+    setQuantity((current) => {
+      if (maxQuantity <= 0) return 0
+      return Math.min(Math.max(current, 1), maxQuantity)
+    })
+  }, [maxQuantity])
 
   return (
     <div className="space-y-3">

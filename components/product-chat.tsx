@@ -70,6 +70,10 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
           return copy
         })
       }
+
+      if (!reply.trim()) {
+        throw new Error('The product concierge is unavailable.')
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'I could not connect right now.'
       setMessages((current) => {
@@ -119,7 +123,11 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
             )}
           >
             {message.role === 'assistant' ? (
-              <ChatRichText content={message.content} onNavigate={onNavigate} />
+              <ChatRichText
+                content={message.content}
+                loading={loading && index === messages.length - 1}
+                onNavigate={onNavigate}
+              />
             ) : (
               message.content
             )}
@@ -168,8 +176,18 @@ export function ProductChat({ open, onClose, onNavigate }: { open: boolean; onCl
   )
 }
 
-function ChatRichText({ content, onNavigate }: { content: string; onNavigate?: () => void }) {
-  if (!content) return <span className="text-muted-foreground">Reviewing the catalog...</span>
+function ChatRichText({
+  content,
+  loading,
+  onNavigate,
+}: {
+  content: string
+  loading?: boolean
+  onNavigate?: () => void
+}) {
+  if (!content) {
+    return loading ? <span className="text-muted-foreground">Reviewing the catalog...</span> : null
+  }
 
   return (
     <span className="whitespace-pre-wrap">
