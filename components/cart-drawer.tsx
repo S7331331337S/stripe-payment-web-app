@@ -51,7 +51,8 @@ export function CartDrawer({
         open ? 'translate-y-0' : 'pointer-events-none translate-y-[120%]',
       )}
     >
-      <div className="flex items-center justify-between px-5 pb-3 pt-4">
+      <div aria-hidden="true" className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-muted" />
+      <div className="flex items-center justify-between px-5 pb-3 pt-2">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand">Bag</p>
           <h2 className="text-lg font-semibold tracking-tight">
@@ -68,7 +69,7 @@ export function CartDrawer({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3">
         {items.length === 0 ? (
           <div className="flex h-40 flex-col items-center justify-center gap-3 text-center">
             <div>
@@ -101,7 +102,7 @@ export function CartDrawer({
                       <button
                         type="button"
                         onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                        className="flex h-10 w-10 items-center justify-center"
+                        className="flex h-11 w-11 items-center justify-center"
                         aria-label={`Decrease ${item.name}`}
                       >
                         <Minus className="h-3.5 w-3.5" />
@@ -111,7 +112,7 @@ export function CartDrawer({
                         type="button"
                         onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
                         disabled={atMax}
-                        className="flex h-10 w-10 items-center justify-center disabled:opacity-40"
+                        className="flex h-11 w-11 items-center justify-center disabled:opacity-40"
                         aria-label={`Increase ${item.name}`}
                       >
                         <Plus className="h-3.5 w-3.5" />
@@ -120,7 +121,7 @@ export function CartDrawer({
                     <button
                       type="button"
                       onClick={() => onRemoveItem(item.id)}
-                      className="flex h-10 w-10 items-center justify-center rounded-full text-destructive hover:bg-destructive/10"
+                      className="flex h-11 w-11 items-center justify-center rounded-full text-destructive hover:bg-destructive/10"
                       aria-label={`Remove ${item.name}`}
                     >
                       <Trash2 className="h-4 w-4" />

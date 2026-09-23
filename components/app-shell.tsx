@@ -44,6 +44,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('keydown', closeOnEscape)
   }, [isCheckoutOpen, closeCheckout, closePanel])
 
+  useEffect(() => {
+    const locked = panel !== 'none' || isCheckoutOpen
+    document.body.style.overflow = locked ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [panel, isCheckoutOpen])
+
   const isProductPage = pathname.startsWith('/products/')
   const isNestedPage = pathname !== '/'
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
