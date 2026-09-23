@@ -91,5 +91,5 @@ export default async function ProductDetails({ params }: { params: Promise<{ id:
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const product = PRODUCTS.find((item) => item.id === id)
-  return { title: product ? `${product.name} | G's Stock` : "Product | G's Stock" }
+  return { title: product ? `${product.name} | Mstrmnd` : "Product | Mstrmnd" }
 }

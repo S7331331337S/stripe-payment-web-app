@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { InfoPage } from '@/components/info-page'
 
 export const metadata: Metadata = {
-  title: "Shipping | G's Stock",
-  description: "Shipping, packing, and delivery notes for G's Stock orders.",
+  title: "Shipping | Mstrmnd",
+  description: "Shipping, packing, and delivery notes for Mstrmnd orders.",
 }
 
 export default function ShippingPage() {

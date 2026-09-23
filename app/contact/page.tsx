@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { InfoPage } from '@/components/info-page'
 
 export const metadata: Metadata = {
-  title: "Contact | G's Stock",
-  description: "How to reach G's Stock about the catalog or an order.",
+  title: "Contact | Mstrmnd",
+  description: "How to reach Mstrmnd about the catalog or an order.",
 }
 
 export default function ContactPage() {
