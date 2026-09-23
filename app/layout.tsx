@@ -23,6 +23,17 @@ export const metadata: Metadata = {
   title: "G's Stock | Clinical Research Supply",
   description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
   generator: 'v0.app',
+  openGraph: {
+    type: 'website',
+    siteName: "G's Stock",
+    title: "G's Stock | Clinical Research Supply",
+    description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "G's Stock | Clinical Research Supply",
+    description: 'A considered catalog of research compounds with clear detail sheets and secure checkout.',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
