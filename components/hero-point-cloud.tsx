@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { createMolecularPoints, molecularBlend, type Vector3 } from '@/lib/molecular-point-cloud'
 
 type Point = {
   x: number
@@ -10,11 +11,12 @@ type Point = {
   screenY: number
   depth: number
   scale: number
+  target?: Vector3
 }
 
 // Adapted from superfanz-evan-e9/components/landing/animated-sphere.tsx.
-// Keep its spherical sampling and three-axis rotation, rendered as fine points.
-export function HeroPointCloud() {
+// Preserve the sphere preset and add illustrative molecular point-cloud studies.
+export function HeroPointCloud({ shape = 'sphere' }: { shape?: 'sphere' | 'helix' | 'protein' | 'molecular' }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -38,9 +40,11 @@ export function HeroPointCloud() {
       if (!width || !height) return
 
       const radius = Math.min(width, height) * 0.43
-      const rotationZ = elapsed * 0.15
+      const molecular = shape !== 'sphere'
+      const blend = shape === 'protein' ? 1 : shape === 'molecular' ? molecularBlend(elapsed) : 0
+      const rotationZ = molecular ? -0.22 + Math.sin(elapsed * 0.13) * 0.12 : elapsed * 0.15
       const rotationY = elapsed * 0.22 + 0.4
-      const rotationX = elapsed * 0.12 + 0.3
+      const rotationX = molecular ? Math.sin(elapsed * 0.17) * 0.2 : elapsed * 0.12 + 0.3
       const sinZ = Math.sin(rotationZ)
       const cosZ = Math.cos(rotationZ)
       const sinY = Math.sin(rotationY)
@@ -49,17 +53,20 @@ export function HeroPointCloud() {
       const cosX = Math.cos(rotationX)
 
       for (const point of points) {
-        const x = point.x * cosZ - point.y * sinZ
-        const y = point.x * sinZ + point.y * cosZ
-        const rotatedX = x * cosY - point.z * sinY
-        const rotatedZ = x * sinY + point.z * cosY
+        const sourceX = point.x + ((point.target?.x ?? point.x) - point.x) * blend
+        const sourceY = point.y + ((point.target?.y ?? point.y) - point.y) * blend
+        const sourceZ = point.z + ((point.target?.z ?? point.z) - point.z) * blend
+        const x = sourceX * cosZ - sourceY * sinZ
+        const y = sourceX * sinZ + sourceY * cosZ
+        const rotatedX = x * cosY - sourceZ * sinY
+        const rotatedZ = x * sinY + sourceZ * cosY
         const rotatedY = y * cosX - rotatedZ * sinX
         const z = y * sinX + rotatedZ * cosX
         const perspective = 3 / (3 - z * 0.35)
 
         point.screenX = width / 2 + rotatedX * radius * perspective
         point.screenY = height / 2 + rotatedY * radius * perspective
-        point.depth = (z + 1) / 2
+        point.depth = Math.max(0, Math.min(1, (z + 1) / 2))
         point.scale = perspective
       }
 
@@ -118,18 +125,29 @@ export function HeroPointCloud() {
 
       // Sample once per resize; smaller canvases need fewer points.
       points = []
-      const step = width < 480 ? 0.19 : 0.15
-      for (let phi = 0; phi < Math.PI * 2; phi += step) {
-        for (let theta = step / 2; theta < Math.PI; theta += step) {
-          points.push({
-            x: Math.sin(theta) * Math.cos(phi),
-            y: Math.sin(theta) * Math.sin(phi),
-            z: Math.cos(theta),
-            screenX: 0,
-            screenY: 0,
-            depth: 0,
-            scale: 1,
-          })
+      if (shape !== 'sphere') {
+        points = createMolecularPoints(width < 480).map(({ helix, protein }) => ({
+          ...helix,
+          target: protein,
+          screenX: 0,
+          screenY: 0,
+          depth: 0,
+          scale: 1,
+        }))
+      } else {
+        const step = width < 480 ? 0.19 : 0.15
+        for (let phi = 0; phi < Math.PI * 2; phi += step) {
+          for (let theta = step / 2; theta < Math.PI; theta += step) {
+            points.push({
+              x: Math.sin(theta) * Math.cos(phi),
+              y: Math.sin(theta) * Math.sin(phi),
+              z: Math.cos(theta),
+              screenX: 0,
+              screenY: 0,
+              depth: 0,
+              scale: 1,
+            })
+          }
         }
       }
 
@@ -143,7 +161,7 @@ export function HeroPointCloud() {
     }
 
     const updateMotion = () => {
-      // Reduced motion keeps a still sphere, including when changed mid-session.
+      // Reduced motion freezes both rotation and morphing, including live changes.
       draw()
       syncAnimation()
     }
@@ -172,10 +190,10 @@ export function HeroPointCloud() {
       document.removeEventListener('visibilitychange', syncAnimation)
       motionPreference.removeEventListener('change', updateMotion)
     }
-  }, [])
+  }, [shape])
 
   return (
-    <div className="hero-point-cloud" aria-hidden="true">
+    <div className="hero-point-cloud" data-shape={shape} aria-hidden="true">
       <canvas ref={canvasRef} className="hero-point-cloud-canvas" />
     </div>
   )
